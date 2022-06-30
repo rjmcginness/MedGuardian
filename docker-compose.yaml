@@ -1,8 +1,0 @@
-services:
-  web:
-    build: ./medguardian
-    command: python manage.py runserver 8000
-    volumes:
-      - ./medguardian/:/usr/src/medguardian
-    ports:
-      - 8000:8000

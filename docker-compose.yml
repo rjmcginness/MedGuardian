@@ -1,0 +1,8 @@
+services:
+  web:
+    build: ./app
+    command: python3 manage.py runserver 8000
+    volumes:
+      - ./app:/usr/src/app
+    ports:
+      - 8000:8000
