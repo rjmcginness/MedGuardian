@@ -3,7 +3,7 @@ FROM python:3.8
 
 EXPOSE 8000
 
-WORKDIR ./app
+WORKDIR /app
 COPY . /app
 
 # Keeps Python from generating .pyc files in the container
