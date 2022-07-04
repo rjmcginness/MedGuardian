@@ -2,9 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Med Guardian</title>
+    <title>MedGuardian</title>
 </head>
 <body>
-    <h1>{{ name }}, Your Medication Guardian is here</h1>
+    <h1>
+        {%  if name %}
+        {{ name }},
+        {% endif %}Your Medication Guardian is here
+    </h1>
+    {%  block content %}{% endblock %}
 </body>
 </html>

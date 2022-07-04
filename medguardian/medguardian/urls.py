@@ -21,4 +21,5 @@ import medications.views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', medications.views.index),
+    path('medication-search/', medications.views.medication_search),
 ]
