@@ -9,7 +9,9 @@ django-rest-framework==0.1.0
 django-six==1.0.4
 djangorestframework==3.13.1
 idna==3.3
+psycopg2==2.9.3
 PyJWT==2.4.0
+python-decouple==3.6
 pytz==2022.1
 requests==2.28.0
 screen==1.0.1
