@@ -22,5 +22,6 @@ class MedicationProductDetails(models.Model):
                                     default='',
                                     help_text='Medication products manufacturer')
     schedule = models.PositiveSmallIntegerField(help_text='Controlled substance category for medication',
-                                                null=True, blank=True)
+                                                null=True,
+                                                blank=True)
     price = models.DecimalField(max_digits=8, decimal_places=4, null=True, blank=True)

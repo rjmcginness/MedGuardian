@@ -13,3 +13,6 @@ class Patient(models.Model):
     contact_information = models.ForeignKey(ContactInformation, null=True, on_delete=models.SET_NULL)
     address = models.ForeignKey(Address, null=True, on_delete=models.SET_NULL)
 
+
+
+
