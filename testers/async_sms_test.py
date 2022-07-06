@@ -1,8 +1,11 @@
 from datetime import datetime
 from datetime import timedelta
 from datetime import time
-from threading import Thread
+from time import sleep
+from threading import Timer
 from typing import Optional
+from twilio.rest import Client
+from decouple import config
 # from prescriptions.models import PrescriptionAdminTime
 
 
@@ -36,7 +39,7 @@ class Clock:
 
     def __next__(self) -> Optional[time]:
         if not self.__times:
-            return None
+            raise StopIteration('Clock has no more times')
 
         next_time = self.__times[self.__time_pointer]
         self.__time_pointer = (self.__time_pointer + 1) % len(self.__times)
@@ -44,12 +47,28 @@ class Clock:
         return next_time
 
 
-class NotifierThread(Thread):
-    def __init__(self) -> None:
-        super().__init__()
+class NotifierTimer(Timer):
+    def __init__(self, clock_inc: int = 5) -> None:
+        self.__clock = Clock(increment=clock_inc)
+        super().__init__(self.__clock.increment*60, self.__notify)
+        self.__next_time = None
 
-    def run(self):
-        super().run()
+    def __notify(self) -> None:
+        # Get prescritions with this admin time
+        admin_time = next(self.__clock)
+        prescriptions = []
+
+        client = None
+
+        if not prescriptions:
+            return
+
+        client = Client(config('TWILIO_ACCOUNT_SID'), config('TWILIO_AUTH_TOKEN'))
+        server_number = config('TWILIO_NUMBER')
+        for rx in prescriptions:
+            
+            client.messages.create()
+
 
 
 if __name__ == '__main__':
