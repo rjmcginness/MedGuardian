@@ -149,7 +149,7 @@ value: TIME NOT NULL
 description: CHAR(256)</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>290</x><y>450</y><w>210</w><h>100</h></coordinates><panel_attributes>lt=-
 m1=0..n
 m2=1..n
-administered &gt;</panel_attributes><additional_attributes>10;10;190;80</additional_attributes></element><element><id>UMLClass</id><coordinates><x>483</x><y>230</y><w>210</w><h>100</h></coordinates><panel_attributes>Administration History
+administered &gt;</panel_attributes><additional_attributes>10;10;190;80</additional_attributes></element><element><id>UMLClass</id><coordinates><x>483</x><y>230</y><w>210</w><h>100</h></coordinates><panel_attributes>Administration
 --
 id: SERIAL PRIMARY KEY
 quantity_given: REAL NOT NULL
