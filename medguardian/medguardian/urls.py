@@ -15,11 +15,21 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.urls import include
+from rest_framework import routers
+
 import medications.views
 
+
+router = routers.DefaultRouter()
+router.register(r'medications', medications.views.MedicationViewSet)
+router.register(r'medication-products',
+                medications.views.MedicationProductDetailsViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', medications.views.index),
     path('medication-search/', medications.views.medication_search),
+    path('', include(router.urls)),
+    # path('medication-products', include(router.urls)),
 ]

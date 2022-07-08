@@ -25,3 +25,5 @@ class MedicationProductDetails(models.Model):
                                                 null=True,
                                                 blank=True)
     price = models.DecimalField(max_digits=8, decimal_places=4, null=True, blank=True)
+
+    medication = models.ForeignKey(Medication, on_delete=models.CASCADE)
