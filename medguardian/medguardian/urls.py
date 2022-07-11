@@ -19,17 +19,20 @@ from django.urls import include
 from rest_framework import routers
 
 import medications.views
+import medications.forms
 
 
 router = routers.DefaultRouter()
-router.register(r'medications', medications.views.MedicationViewSet)
-router.register(r'medication-products',
+router.register('medications', medications.views.MedicationViewSet)
+router.register('medication-products',
                 medications.views.MedicationProductDetailsViewSet)
+# router.register('medications/create', medications.forms.MedicationCreateForm)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', medications.views.index),
     path('medication-search/', medications.views.medication_search),
     path('', include(router.urls)),
+    path('medications/create', medications.views.medication_create),
     # path('medication-products', include(router.urls)),
 ]
