@@ -13,7 +13,7 @@ from .forms import MedicationCreateForm
 def index(request):
     name = request.GET.get('name') or ''
 
-    return render(request, '../medguardian/templates/base.html', {'name': name})
+    return render(request, 'base.html', {'name': name})
 
 
 def medication_search(request):
