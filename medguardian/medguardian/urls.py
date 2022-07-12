@@ -20,6 +20,7 @@ from rest_framework import routers
 
 import medications.views
 import medications.forms
+from .views import RegistrationView
 
 
 router = routers.DefaultRouter()
@@ -32,6 +33,7 @@ urlpatterns = [
     path('accounts/',
          include(('django.contrib.auth.urls', 'auth'), namespace='accounts')
         ),
+    path('register/', RegistrationView.as_view()),
     path('admin/', admin.site.urls),
     path('', medications.views.index),
     path('medication-search/', medications.views.medication_search),
