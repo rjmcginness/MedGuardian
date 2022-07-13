@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class ContactInformation(models.Model):
@@ -23,7 +24,7 @@ class ContactInformation(models.Model):
                                   help_text='Fax number',
                                   null=True,
                                   blank=True)
-    email = models.EmailField(help_text='Email address')
+    # email = models.EmailField(help_text='Email address')
 
 
 class Address(models.Model):
@@ -43,3 +44,9 @@ class Address(models.Model):
                               blank=True)
     zip_code = models.CharField(max_length=10,
                                 help_text='Zip Code')
+
+
+class Patient(User):
+    birth_date = models.DateField()
+    contact_information = models.ForeignKey(ContactInformation, null=True, on_delete=models.SET_NULL)
+    address = models.ForeignKey(Address, null=True, on_delete=models.SET_NULL)

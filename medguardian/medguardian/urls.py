@@ -30,9 +30,9 @@ router.register('medication-products',
 # router.register('medications/create', medications.forms.MedicationCreateForm)
 
 urlpatterns = [
-    path('accounts/',
-         include(('django.contrib.auth.urls', 'auth'), namespace='accounts')
-        ),
+    # path('accounts/',
+    #      include(('django.contrib.auth.urls', 'auth'), namespace='accounts')
+    #     ),
     path('register/', RegistrationView.as_view()),
     path('admin/', admin.site.urls),
     path('', medications.views.index),

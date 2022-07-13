@@ -1,7 +1,7 @@
 from django.db import models
 from src.user_model import ContactInformation
 from src.user_model import Address
-from users.models import Patient
+from src.user_model import Patient
 from medications.models import Medication
 from django.utils import timezone
 
