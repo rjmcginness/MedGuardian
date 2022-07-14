@@ -1,6 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
+
+from datetime import datetime
+
 from src.user_model import Patient
 from src.user_model import Address
 from src.user_model import ContactInformation
@@ -11,7 +14,7 @@ def valid_number_given(home, mobile, fax) -> bool:
     no_mobile = not mobile or mobile == ''
     no_fax = not fax or fax == ''
 
-    return no_home and no_mobile and no_fax
+    return not(no_home and no_mobile and no_fax)
 
 
 class RegistrationForm(UserCreationForm):
@@ -52,38 +55,49 @@ class RegistrationForm(UserCreationForm):
                   'password2']
 
     def clean(self):
-        super().clean()
-        if not valid_number_given(self.home_number,
-                                  self.mobile_number,
-                                  self.fax_number):
-            raise ValidationError('One contact number required')
+        cleaned_data = super().clean()
+        if not valid_number_given(cleaned_data.get('home_number', None),
+                                  cleaned_data.get('mobile_number', None),
+                                  cleaned_data.get('fax_number', None)):
+            raise ValidationError('At least one contact number is required')
 
     def save(self, commit=True) -> Patient:
-        user = super().save(commit)
+        data = self.cleaned_data
+        address = Address(street=data['street'],
+                          street2=data['street2'],
+                          city=data['city'],
+                          county=data['county'],
+                          state_name=data['state'],
+                          zip_code=data['zip_code']
+                         )
 
-        address = Address()
-        address.street = self.street
-        address.street2 = self.street2
-        address.city = self.city
-        address.state_name = self.state
-        address.county = self.county
-        address.zip_code = self.zip_code
-
-        contact = ContactInformation()
-        contact.preferred_type = self.preferred_contact
-        contact.home_phone = self.home_number
-        contact.mobile_phone = self.mobile_number
-        contact.fax_number = self.fax_number
+        # one of phone, mobile, or fax will have a value (form validation)
+        contact = ContactInformation(home_phone=data.get('home_number', None),
+                                     mobile_phone=data.get('mobile_number', None),
+                                     fax_number=data.get('fax_number', None),
+                                     preferred_type=data['preferred_contact']
+                                    )
 
         address.save()
         contact.save()
 
-        patient = Patient()
-        patient.pk = user.pk
-        patient.birth_date = self.date_of_birth
-        patient.address = address
-        patient.contact_information = contact
+        patient = Patient(username=data['username'],
+                          first_name=data['first_name'],
+                          last_name=data['last_name'],
+                          email=data['email'],
+                          is_staff=False,
+                          is_superuser=False,
+                          is_active=True,
+                          date_joined=datetime.now(),
+                          birth_date=data['date_of_birth'],
+                          address=address,
+                          contact_information=contact
+                          )
 
+        # patient.save()
+
+        # call User.set_password to set the password (preforms hashing)
+        patient.set_password(data['password1'])
         patient.save()
 
         return patient

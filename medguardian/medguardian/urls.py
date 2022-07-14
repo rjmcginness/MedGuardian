@@ -21,6 +21,7 @@ from rest_framework import routers
 import medications.views
 import medications.forms
 from .views import RegistrationView
+from .views import RegistrationSuccessView
 
 
 router = routers.DefaultRouter()
@@ -30,14 +31,16 @@ router.register('medication-products',
 # router.register('medications/create', medications.forms.MedicationCreateForm)
 
 urlpatterns = [
-    # path('accounts/',
-    #      include(('django.contrib.auth.urls', 'auth'), namespace='accounts')
-    #     ),
+    path('accounts/',
+         include(('django.contrib.auth.urls', 'auth'), namespace='accounts')
+        ),
     path('register/', RegistrationView.as_view()),
     path('admin/', admin.site.urls),
     path('', medications.views.index),
     path('medication-search/', medications.views.medication_search),
     path('', include(router.urls)),
     path('medications/create', medications.views.medication_create),
-    # path('medication-products', include(router.urls)),
+    path('account_created',
+         RegistrationSuccessView.as_view(),
+         name='account_created'),
 ]

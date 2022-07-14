@@ -19,7 +19,9 @@ class ContactInformation(models.Model):
                                   null=True,
                                   blank=True)
     mobile_phone = models.CharField(max_length=15,
-                                    help_text='Mobile device number')
+                                    help_text='Mobile device number',
+                                    null=True,
+                                    blank=True)
     fax_number = models.CharField(max_length=15,
                                   help_text='Fax number',
                                   null=True,
