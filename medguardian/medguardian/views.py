@@ -4,6 +4,12 @@ from django.views import View
 from django.shortcuts import render
 from .forms import RegistrationForm
 
+
+class HomepageView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'home.html')
+
+
 class RegistrationView(FormView):
 
     template_name = 'registration/register.html'
@@ -14,6 +20,7 @@ class RegistrationView(FormView):
 
         form.save()
         return super().form_valid(form)
+
 
 class RegistrationSuccessView(View):
     def get(self, request, *args, **kwargs):
