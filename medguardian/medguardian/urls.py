@@ -20,27 +20,33 @@ from rest_framework import routers
 
 import medications.views
 import medications.forms
+from .views import FrontPageView
 from .views import RegistrationView
 from .views import RegistrationSuccessView
+from .views import LogoutView
+from .views import ProfileViewSet
 
 
 router = routers.DefaultRouter()
 router.register('medications', medications.views.MedicationViewSet)
 router.register('medication-products',
                 medications.views.MedicationProductDetailsViewSet)
+router.register('accounts/profile', ProfileViewSet)
 # router.register('medications/create', medications.forms.MedicationCreateForm)
 
 urlpatterns = [
-    path('accounts/',
-         include(('django.contrib.auth.urls', 'auth'), namespace='accounts')
-        ),
+    path('', FrontPageView.as_view()),
+    # path('profile_home', )
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('register/', RegistrationView.as_view()),
-    path('admin/', admin.site.urls),
-    path('', medications.views.index),
     path('medication-search/', medications.views.medication_search),
     path('', include(router.urls)),
     path('medications/create', medications.views.medication_create),
     path('account_created',
          RegistrationSuccessView.as_view(),
          name='account_created'),
+    path('accounts/',
+         include(('django.contrib.auth.urls', 'auth'), namespace='accounts')
+         ),
+    path('admin/', admin.site.urls),
 ]
