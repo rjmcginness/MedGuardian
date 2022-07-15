@@ -18,14 +18,14 @@ class AddressSerializer(serializers.HyperlinkedModelSerializer):
 class ContactInformationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ContactInformation
-        fields = ('phone_number',
-                  'mobile_number',
+        fields = ('home_phone',
+                  'mobile_phone',
                   'fax_number')
 
 
 class PatientSerializer(serializers.HyperlinkedModelSerializer):
     address = AddressSerializer()
-    contacts = ContactInformationSerializer()
+    contact_information = ContactInformationSerializer()
 
     class Meta:
         model = Patient
@@ -33,4 +33,6 @@ class PatientSerializer(serializers.HyperlinkedModelSerializer):
                   'last_name',
                   'username',
                   'birth_date',
-                  'email')
+                  'email',
+                  'address',
+                  'contact_information')

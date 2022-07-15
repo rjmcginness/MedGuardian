@@ -23,24 +23,29 @@ import medications.forms
 from .views import FrontPageView
 from .views import RegistrationView
 from .views import RegistrationSuccessView
+from .views import LoginViewWrap
 from .views import LogoutView
-from .views import ProfileViewSet
+from .views import ProfileView
+# from .views import ProfileViewSet
 
 
 router = routers.DefaultRouter()
 router.register('medications', medications.views.MedicationViewSet)
 router.register('medication-products',
                 medications.views.MedicationProductDetailsViewSet)
-router.register('accounts/profile', ProfileViewSet)
+# router.register('accounts/profile', ProfileViewSet)
 # router.register('medications/create', medications.forms.MedicationCreateForm)
+
+print(router.urls)
 
 urlpatterns = [
     path('', FrontPageView.as_view()),
-    # path('profile_home', )
-    path('logout/', LogoutView.as_view(), name='logout'),
-    path('register/', RegistrationView.as_view()),
-    path('medication-search/', medications.views.medication_search),
     path('', include(router.urls)),
+    path('register/', RegistrationView.as_view()),
+    path('accounts/<int:pk>/profile/', ProfileView.as_view(), name='account_profile'),
+    path('login', LoginViewWrap.as_view(), name='login'), # need this before 'accounts'
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('medication-search/', medications.views.medication_search),
     path('medications/create', medications.views.medication_create),
     path('account_created',
          RegistrationSuccessView.as_view(),
