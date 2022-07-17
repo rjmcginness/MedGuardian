@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <H3>Active Medications</H3>
+    <table>
+        <thead>
+            <tr>
+                <th>Generic Name</th>
+                <th>Brand Name</th>
+                <th>Medication Stregth</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for medication in medications %}
+            <tr>
+                <td>{{ medication.generic_name }}</td>
+                <td>{{ medication.brand_name }}</td>
+                <td>{{ medication.strength }} {{ medication.strength_units }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

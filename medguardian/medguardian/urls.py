@@ -30,7 +30,10 @@ from .views import ProfileView
 
 
 router = routers.DefaultRouter()
-router.register('medications', medications.views.MedicationViewSet)
+router.register('medications',
+                medications.views.ActiveMedProfileViewSet,
+                basename='medications')
+# router.register('medications', medications.views.MedicationViewSet)
 router.register('medication-products',
                 medications.views.MedicationProductDetailsViewSet)
 # router.register('accounts/profile', ProfileViewSet)
