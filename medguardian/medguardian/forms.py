@@ -91,8 +91,6 @@ class RegistrationForm(UserCreationForm):
                           contact_information=contact
                           )
 
-        # patient.save()
-
         # call User.set_password to set the password (preforms hashing)
         patient.set_password(data['password1'])
         patient.save()
