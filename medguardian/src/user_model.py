@@ -26,7 +26,6 @@ class ContactInformation(models.Model):
                                   help_text='Fax number',
                                   null=True,
                                   blank=True)
-    # email = models.EmailField(help_text='Email address')
 
 
 class Address(models.Model):

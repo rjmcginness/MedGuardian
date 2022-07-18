@@ -176,3 +176,7 @@ class PrescriptionMedication(models.Model):
 class PharmacistTransaction(models.Model):
     pharmacist = models.ForeignKey(Pharmacist, on_delete=models.CASCADE)
     transaction = models.ForeignKey(PrescriptionTransaction, on_delete=models.CASCADE)
+
+class PatientPrescribers(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    prescriber = models.ForeignKey(Prescriber, on_delete=models.CASCADE)

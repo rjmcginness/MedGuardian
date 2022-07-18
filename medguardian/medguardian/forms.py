@@ -21,9 +21,6 @@ class RegistrationForm(UserCreationForm):
     date_of_birth = forms.DateField(widget=forms.DateInput(
         attrs={'type': 'date'})
     )
-    # password = forms.CharField(widget=forms.PasswordInput())
-    # password_repeat = forms.CharField(label="Password (repeat)",
-    #                                   widget=forms.PasswordInput())
 
     street = forms.CharField(max_length=256)
     street2 = forms.CharField(max_length=256, required=False)

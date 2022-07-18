@@ -26,7 +26,7 @@ from .views import RegistrationSuccessView
 from .views import LoginViewWrap
 from .views import LogoutView
 from .views import ProfileView
-# from .views import ProfileViewSet
+from prescriptions.views import PrescriptionCreateView
 
 
 router = routers.DefaultRouter()
@@ -39,20 +39,20 @@ router.register('medication-products',
 # router.register('accounts/profile', ProfileViewSet)
 # router.register('medications/create', medications.forms.MedicationCreateForm)
 
-print(router.urls)
-
 urlpatterns = [
     path('', FrontPageView.as_view()),
     path('', include(router.urls)),
-    path('register/', RegistrationView.as_view()),
+    path('register/', RegistrationView.as_view(), name='register'),
+    path('account_created',
+         RegistrationSuccessView.as_view(),
+         name='account_created'),
     path('accounts/<int:pk>/profile/', ProfileView.as_view(), name='account_profile'),
+    path('accounts/<int:pk>/prescriptions/new', PrescriptionCreateView.as_view(), name='new_rx'),
     path('login', LoginViewWrap.as_view(), name='login'), # need this before 'accounts'
     path('logout/', LogoutView.as_view(), name='logout'),
     path('medication-search/', medications.views.medication_search),
     path('medications/create', medications.views.medication_create),
-    path('account_created',
-         RegistrationSuccessView.as_view(),
-         name='account_created'),
+
     path('accounts/',
          include(('django.contrib.auth.urls', 'auth'), namespace='accounts')
          ),
