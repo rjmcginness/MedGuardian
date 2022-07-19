@@ -30,7 +30,7 @@
                 <td>{{ prescriber.address }}</td>
                 <td>{{ prescriber.contact_information.home_phone }}</td>
                 <td>
-                    <form method="PATCH" action="{% url 'prescriber_add_success' id=request.user.id presciber_id=prescriber.id %}">
+                    <form method="POST" action="{% url 'add_prescriber' pk=request.user.id prescriber_id=prescriber.id %}">
                         {% csrf_token %}
                         <input type="submit" value="Add"/>
                     </form>
