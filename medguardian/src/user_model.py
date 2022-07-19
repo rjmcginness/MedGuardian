@@ -46,6 +46,9 @@ class Address(models.Model):
     zip_code = models.CharField(max_length=10,
                                 help_text='Zip Code')
 
+    def __str__(self) -> str:
+        return f'{self.street}\n{self.street2}\n{self.city} {self.state_name} {self.zip_code}'
+
 
 class Patient(User):
     birth_date = models.DateField()

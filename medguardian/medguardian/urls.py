@@ -27,6 +27,7 @@ from .views import LoginViewWrap
 from .views import LogoutView
 from .views import ProfileView
 from prescriptions.views import PrescriberCreateView
+from prescriptions.views import PrescriberSelectView
 from prescriptions.views import PrescriptionCreateView
 
 
@@ -50,6 +51,7 @@ urlpatterns = [
     path('accounts/<int:pk>/profile/', ProfileView.as_view(), name='account_profile'),
     path('accounts/<int:pk>/prescriptions/new', PrescriptionCreateView.as_view(), name='new_rx'),
     path('accounts/<int:pk>/prescribers/new', PrescriberCreateView.as_view(), name='new_prescriber'),
+    path('accounts/<int:pk>/prescribers/select', PrescriberSelectView.as_view(), name='add_prescriber'),
     path('login', LoginViewWrap.as_view(), name='login'), # need this before 'accounts'
     path('logout/', LogoutView.as_view(), name='logout'),
     path('medication-search/', medications.views.medication_search),

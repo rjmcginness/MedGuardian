@@ -28,13 +28,13 @@ m2=0..1
 teaches to &amp;gt;&lt;/panel_attributes&gt;&lt;additional_attributes&gt;10;20;170;20&lt;/additional_attributes&gt;&lt;/element&gt;&lt;/diagram&gt;&lt;diagram program="umletino" version="14.4.0-SNAPSHOT"&gt;&lt;zoom_level&gt;10&lt;/zoom_level&gt;&lt;element&gt;&lt;id&gt;Relation&lt;/id&gt;&lt;coordinates&gt;&lt;x&gt;230&lt;/x&gt;&lt;y&gt;190&lt;/y&gt;&lt;w&gt;190&lt;/w&gt;&lt;h&gt;50&lt;/h&gt;&lt;/coordinates&gt;&lt;panel_attributes&gt;lt=-
 m1=0..n
 m2=0..1
-teaches to &amp;gt;&lt;/panel_attributes&gt;&lt;additional_attributes&gt;10;20;170;20&lt;/additional_attributes&gt;&lt;/element&gt;&lt;/diagram&gt;</help_text><element><id>UMLClass</id><coordinates><x>0</x><y>600</y><w>220</w><h>100</h></coordinates><panel_attributes>Medication
+teaches to &amp;gt;&lt;/panel_attributes&gt;&lt;additional_attributes&gt;10;20;170;20&lt;/additional_attributes&gt;&lt;/element&gt;&lt;/diagram&gt;</help_text><element><id>UMLClass</id><coordinates><x>10</x><y>590</y><w>220</w><h>100</h></coordinates><panel_attributes>Medication
 --
 id: SERIAL PRIMARY KEY
 generic_name: CHAR(128) NOT NULL
 brand_name: Char(128)
 strength: REAL
-dosage_form: CHAR(128) NOT NULL</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>800</y><w>210</w><h>100</h></coordinates><panel_attributes>Medication Product Details
+dosage_form: CHAR(128) NOT NULL</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>10</x><y>790</y><w>210</w><h>100</h></coordinates><panel_attributes>Medication Product Details
 --
 id: SERIAL PRIMARY KEY
 ndc: CHAR(11) NOT NULL UNIQUE
@@ -46,18 +46,18 @@ id: SERIAL PRIMARY KEY
 ndc: CHAR(11) NOT NULL UNIQUE
 manufacturer: CHAR(80) NOT NULL
 schedule: INTEGER
-price: REAL</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>103</x><y>690</y><w>60</w><h>130</h></coordinates><panel_attributes>lt=-
+price: REAL</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>113</x><y>680</y><w>60</w><h>130</h></coordinates><panel_attributes>lt=-
 m1=1
 m2=1..n
-has &gt;</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>UMLClass</id><coordinates><x>243</x><y>590</y><w>210</w><h>90</h></coordinates><panel_attributes>Route of Administration
+has &gt;</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>UMLClass</id><coordinates><x>253</x><y>580</y><w>210</w><h>90</h></coordinates><panel_attributes>Route of Administration
 --
 id: SERIAL PRIMARY KEY
 name: CHAR(80) NOT NULL UNIQUE
 abbreviation: CHAR(12)
-description: CHAR(256)</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>200</x><y>480</y><w>140</w><h>130</h></coordinates><panel_attributes>lt=-
+description: CHAR(256)</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>210</x><y>470</y><w>140</w><h>130</h></coordinates><panel_attributes>lt=-
 m1=1..n
 m2=1..n
-administered via &gt;</panel_attributes><additional_attributes>10;10;40;110</additional_attributes></element><element><id>UMLClass</id><coordinates><x>10</x><y>220</y><w>290</w><h>270</h></coordinates><panel_attributes>Prescription
+administered via &gt;</panel_attributes><additional_attributes>10;10;40;110</additional_attributes></element><element><id>UMLClass</id><coordinates><x>20</x><y>210</y><w>290</w><h>270</h></coordinates><panel_attributes>Prescription
 --
 id: SERIAL PRIMARY KEY
 patient_id: INTEGER FOREIGN KEY NOT NULL
@@ -74,46 +74,46 @@ expiration_date: DATE NOT NULL
 date_written: DATE NOT NULL
 is_prn: BOOLEAN NOT NULL DEFAULT FALSE
 prn_reason: CHAR(80)
-is_active: BOOLEAN NOT NULL DEFAULT TRUE</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>106</x><y>480</y><w>120</w><h>140</h></coordinates><panel_attributes>lt=-
+is_active: BOOLEAN NOT NULL DEFAULT TRUE</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>116</x><y>470</y><w>120</w><h>140</h></coordinates><panel_attributes>lt=-
 m1=0..n
 m2=0..n
-allows use of  &gt;</panel_attributes><additional_attributes>10;10;10;120</additional_attributes></element><element><id>UMLClass</id><coordinates><x>466</x><y>360</y><w>230</w><h>100</h></coordinates><panel_attributes>Prescription Transaction
+allows use of  &gt;</panel_attributes><additional_attributes>10;10;10;120</additional_attributes></element><element><id>UMLClass</id><coordinates><x>476</x><y>350</y><w>230</w><h>100</h></coordinates><panel_attributes>Prescription Transaction
 --
 id: SERIAL PRIMARY KEY
 prescription_id: INTEGER FOREIGN KEY
 status: CHAR(20) NOT NULL
 transaction_type_id: INTEGER FOREIGN KEY
-date_time: DATETIME NOT NULL</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>826</x><y>170</y><w>190</w><h>90</h></coordinates><panel_attributes>Pharmacy
+date_time: DATETIME NOT NULL</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>836</x><y>160</y><w>190</w><h>90</h></coordinates><panel_attributes>Pharmacy
 --
 id: SERIAL PRIMARY KEY
 name: CHAR(128) NOT NULL
 federal_dea: CHAR(9) NOT NULL
-state_cs: CHAR(20)</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>826</x><y>340</y><w>230</w><h>100</h></coordinates><panel_attributes>Pharmacist
+state_cs: CHAR(20)</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>836</x><y>330</y><w>230</w><h>100</h></coordinates><panel_attributes>Pharmacist
 --
 id: SERIAL PRIMARY KEY
 first_name: CHAR(30) NOT NULL
 last_name: CHAR(30) NOT NULL
 license_number: CHAR(20) NOT NULL
-license_state: CHAR(20) NOT NULL</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>746</x><y>530</y><w>230</w><h>100</h></coordinates><panel_attributes>Customer
+license_state: CHAR(20) NOT NULL</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>756</x><y>520</y><w>230</w><h>100</h></coordinates><panel_attributes>Customer
 --
 id: SERIAL PRIMARY KEY
 first_name: CHAR(30) NOT NULL
 last_name: CHAR(30) NOT NULL
 license_number: CHAR(20) NOT NULL
 license_state: CHAR(20) NOT NULL
-signature: IMAGE NOT NULL</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>686</x><y>450</y><w>140</w><h>100</h></coordinates><panel_attributes>lt=-
+signature: IMAGE NOT NULL</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>696</x><y>440</y><w>140</w><h>100</h></coordinates><panel_attributes>lt=-
 m1=0..n
 m2=0..1
-executed with &gt;</panel_attributes><additional_attributes>10;10;60;80</additional_attributes></element><element><id>Relation</id><coordinates><x>686</x><y>380</y><w>160</w><h>50</h></coordinates><panel_attributes>lt=-
+executed with &gt;</panel_attributes><additional_attributes>10;10;60;80</additional_attributes></element><element><id>Relation</id><coordinates><x>696</x><y>370</y><w>160</w><h>50</h></coordinates><panel_attributes>lt=-
 m1=0..n
 m2=0..n
-executed by &gt;</panel_attributes><additional_attributes>10;20;140;20</additional_attributes></element><element><id>Relation</id><coordinates><x>920</x><y>250</y><w>90</w><h>110</h></coordinates><panel_attributes>lt=-
+executed by &gt;</panel_attributes><additional_attributes>10;20;140;20</additional_attributes></element><element><id>Relation</id><coordinates><x>930</x><y>240</y><w>90</w><h>110</h></coordinates><panel_attributes>lt=-
 m1=0..n
 m2=0..n
-works for &gt;</panel_attributes><additional_attributes>10;10;10;90</additional_attributes></element><element><id>Relation</id><coordinates><x>290</x><y>350</y><w>190</w><h>80</h></coordinates><panel_attributes>lt=-
+works for &gt;</panel_attributes><additional_attributes>10;10;10;90</additional_attributes></element><element><id>Relation</id><coordinates><x>300</x><y>340</y><w>190</w><h>80</h></coordinates><panel_attributes>lt=-
 m1=1
 m2=0..n
-documented by &gt;</panel_attributes><additional_attributes>10;60;170;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>16</x><y>10</y><w>270</w><h>130</h></coordinates><panel_attributes>Prescriber
+documented by &gt;</panel_attributes><additional_attributes>10;60;170;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>26</x><y>0</y><w>270</w><h>130</h></coordinates><panel_attributes>Prescriber
 --
 id: SERIAL PRIMARY KEY
 first_name: CHAR(30) NOT NULL
@@ -121,20 +121,20 @@ last_name: CHAR(30) NOT NULL
 federal_dea: CHAR(9) NOT NULL
 state_dea: CHAR(20) NOT NULL
 contact_information_id: INTEGER FOREIGN KEY
-address_id: INTEGER FOREIGN KEY</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>290</x><y>110</y><w>130</w><h>130</h></coordinates><panel_attributes>lt=-
+address_id: INTEGER FOREIGN KEY</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>300</x><y>100</y><w>130</w><h>130</h></coordinates><panel_attributes>lt=-
 m1=0..n
 m2=1
-prescribed for &gt;</panel_attributes><additional_attributes>10;110;40;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>336</x><y>10</y><w>270</w><h>120</h></coordinates><panel_attributes>Patient
+prescribed for &gt;</panel_attributes><additional_attributes>10;110;40;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>346</x><y>0</y><w>270</w><h>120</h></coordinates><panel_attributes>Patient
 --
 id: SERIAL PRIMARY KEY
 first_name: CHAR(30) NOT NULL
 last_name: CHAR(30) NOT NULL
 date_of_birth: DATE NOT NULL
 contact_information_id: INTEGER FOREIGN KEY
-address_id: INTEGER FOREIGN KEY</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>140</x><y>130</y><w>110</w><h>110</h></coordinates><panel_attributes>lt=-
+address_id: INTEGER FOREIGN KEY</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>150</x><y>120</y><w>110</w><h>110</h></coordinates><panel_attributes>lt=-
 m1=1
 m2=0..n
-prescribed by &gt;</panel_attributes><additional_attributes>10;10;10;90</additional_attributes></element><element><id>UMLClass</id><coordinates><x>483</x><y>530</y><w>210</w><h>120</h></coordinates><panel_attributes>Frequency
+prescribed by &gt;</panel_attributes><additional_attributes>10;10;10;90</additional_attributes></element><element><id>UMLClass</id><coordinates><x>493</x><y>520</y><w>210</w><h>120</h></coordinates><panel_attributes>Frequency
 --
 id: SERIAL PRIMARY KEY
 name: CHAR(80) NOT NULL UNIQUE
@@ -142,23 +142,23 @@ abbreviation: CHAR(12)
 description: CHAR(256)
 value: REAL NOT NULL
 units: CHAR(20) NOT NULL
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>483</x><y>150</y><w>210</w><h>70</h></coordinates><panel_attributes>Administration Time
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>493</x><y>140</y><w>210</w><h>70</h></coordinates><panel_attributes>Administration Time
 --
 id: SERIAL PRIMARY KEY
 value: TIME NOT NULL
-description: CHAR(256)</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>290</x><y>460</y><w>210</w><h>100</h></coordinates><panel_attributes>lt=-
+description: CHAR(256)</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>300</x><y>450</y><w>210</w><h>100</h></coordinates><panel_attributes>lt=-
 m1=0..n
 m2=1..n
-administered &gt;</panel_attributes><additional_attributes>10;10;190;80</additional_attributes></element><element><id>UMLClass</id><coordinates><x>483</x><y>240</y><w>210</w><h>100</h></coordinates><panel_attributes>Administration
+administered &gt;</panel_attributes><additional_attributes>10;10;190;80</additional_attributes></element><element><id>UMLClass</id><coordinates><x>493</x><y>230</y><w>210</w><h>100</h></coordinates><panel_attributes>Administration
 --
 id: SERIAL PRIMARY KEY
 quantity_given: REAL NOT NULL
 time_given: TIME NOT NULL
 outcome: TEXT
-description: CHAR(256)</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>290</x><y>180</y><w>210</w><h>110</h></coordinates><panel_attributes>lt=-
+description: CHAR(256)</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>300</x><y>170</y><w>210</w><h>110</h></coordinates><panel_attributes>lt=-
 m1=0..n
 m2=1..n
-administered at &gt;</panel_attributes><additional_attributes>10;90;190;10</additional_attributes></element><element><id>Relation</id><coordinates><x>290</x><y>280</y><w>210</w><h>80</h></coordinates><panel_attributes>lt=-
+administered at &gt;</panel_attributes><additional_attributes>10;90;190;10</additional_attributes></element><element><id>Relation</id><coordinates><x>300</x><y>270</y><w>210</w><h>80</h></coordinates><panel_attributes>lt=-
 m1=1
 m2=0..n
 recorded as &gt;</panel_attributes><additional_attributes>10;60;190;10</additional_attributes></element></diagram>

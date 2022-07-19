@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form method="GET" action="{{ request.path }}">
+        {{ form.as_p }}
+        <input type="submit" value="Search"/>
+    </form>
+    {% if prescribers|length == 0 %}
+    <hr>
+    <h4>No prescribers found.</h4>
+    <a href="{% url 'new_prescriber' pk=request.user.id %}">Add Your Prescriber</a>
+    {% elif prescribers|length > 0 %}
+    <hr>
+    <h3>Prescribers</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Office Address</th>
+                <th>Office Phone Number</th>
+                <th> </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prescriber in prescribers %}
+            <tr>
+                <td>{{ prescriber.first_name }}</td>
+                <td>{{ prescriber.last_name }}</td>
+                <td>{{ prescriber.address }}</td>
+                <td>{{ prescriber.contact_information.home_phone }}</td>
+                <td>
+                    <form method="PATCH" action="{% url 'prescriber_add_success' id=request.user.id presciber_id=prescriber.id %}">
+                        {% csrf_token %}
+                        <input type="submit" value="Add"/>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+
+    {% endif %}
+{% endblock %}

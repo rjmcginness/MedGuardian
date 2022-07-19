@@ -3,7 +3,10 @@ from .models import Prescriber
 from .models import Prescription
 from src.user_model import Address
 from src.user_model import ContactInformation
-# from django.contrib.auth.mixins import LoginRequiredMixin
+from src.utils import states_tuple
+
+
+
 
 class PrescriberCreateForm(forms.ModelForm):
     street = forms.CharField(max_length=256)
@@ -23,6 +26,7 @@ class PrescriberCreateForm(forms.ModelForm):
 
     def save(self, commit=True) -> Prescriber:
         data = self.cleaned_data
+
         address = Address(street=data['street'],
                           street2=data['street2'],
                           city=data['city'],
@@ -42,16 +46,26 @@ class PrescriberCreateForm(forms.ModelForm):
         contact.save()
 
         prescriber = Prescriber(first_name=data['first_name'],
-                          last_name=data['last_name'],
-                          federal_dea=data['federal_dea'],
-                          state_dea=data['state_dea'],
-                          address=address,
-                          contact_information=contact
-                          )
+                                last_name=data['last_name'],
+                                federal_dea=data['federal_dea'],
+                                state_dea=data['state_dea'],
+                                address=address,
+                                contact_information=contact
+                               )
 
         prescriber.save()
 
         return prescriber
+
+class PrescriberSelectForm(forms.Form):
+    prescriber_name = forms.CharField(max_length=80,
+                                      help_text="Your doctor's last name"
+                                     )
+    city = forms.CharField(max_length=80,
+                           help_text="Where is your doctor's office?"
+                          )
+    state = forms.ChoiceField(choices=states_tuple(),
+                              help_text="State where your doctor practices")
 
 class PrescriptionCreateForm(forms.ModelForm):
 
