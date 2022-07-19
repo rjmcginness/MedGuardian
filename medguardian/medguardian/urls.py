@@ -29,6 +29,7 @@ from .views import ProfileView
 from prescriptions.views import PrescriberCreateView
 from prescriptions.views import PrescriberSelectView
 from prescriptions.views import PrescriptionCreateView
+from prescriptions.views import PrescriberView
 from prescriptions.views import PrescriberAddSuccessView
 
 
@@ -49,14 +50,16 @@ urlpatterns = [
     path('account_created',
          RegistrationSuccessView.as_view(),
          name='account_created'),
+    path('login', LoginViewWrap.as_view(), name='login'),  # need this before 'accounts'
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('accounts/<int:pk>/profile/', ProfileView.as_view(), name='account_profile'),
     path('accounts/<int:pk>/prescriptions/new', PrescriptionCreateView.as_view(), name='new_rx'),
     path('accounts/<int:pk>/prescribers/new', PrescriberCreateView.as_view(), name='new_prescriber'),
     path('accounts/<int:pk>/prescribers/select', PrescriberSelectView.as_view(), name='select_prescriber'),
-    path('accounts/<int:pk>/prescribers/<int:prescriber_id>/add', PrescriberSelectView.as_view(), name='add_prescriber'),
+    path('accounts/<int:pk>/prescribers/<int:prescriber_id>',
+         PrescriberView.as_view(),
+         name='prescriber'),
     path('accounts/<int:pk>/prescribers/success', PrescriberAddSuccessView.as_view(), name='prescriber_add_success'),
-    path('login', LoginViewWrap.as_view(), name='login'), # need this before 'accounts'
-    path('logout/', LogoutView.as_view(), name='logout'),
     path('medication-search/', medications.views.medication_search),
     path('medications/create', medications.views.medication_create),
 

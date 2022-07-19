@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from django.urls import reverse
 from django.views.generic import FormView
 from django.views.generic import TemplateView
+from django.views.generic import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
 
@@ -31,7 +31,7 @@ class PrescriberCreateView(MedGuardianViewMixin):
 class PrescriberSelectView(MedGuardianViewMixin):
     form_class = PrescriberSelectForm
     template_name = 'prescriber-search.html'
-    success_url = 'prescriber_add_success'
+    success_url = '/accounts/<int:pk>/prescribers/success'
 
     def get(self, request, *args, **kwargs):
         querydict = request.GET.dict()
@@ -55,12 +55,32 @@ class PrescriberSelectView(MedGuardianViewMixin):
         patient_prescribers = PatientPrescribers.objects.create(patient_id=self.kwargs.get('pk'),
                                                                 prescriber_id=self.kwargs.get('prescriber_id'))
 
+        patient_prescribers.save()
         print('>>>>>>>>>', patient_prescribers.id)
-        return render(request, reverse('prescriber_add_success'))
+        context = {
+            'pk': self.request.user.id,
+            'prescriber_id': self.kwargs.get('prescriber_id')
+        }
+        return render(self.request, reverse('prescriber_add_success'), context)
+
+class PrescriberView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    model = Prescriber
+    template_name = 'prescriber.html'
+    
 
 class PrescriberAddSuccessView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'prescriber-added.html'
-
+# class PrescriberAddSuccessView(MedGuardianViewMixin):
+#     form_class = PrescriberSelectForm
+#     template_name = 'prescriber-added.html'
+#     success_url = '/prescribers'
+#
+#     def form_valid(self, form):
+#         patient_prescribers = PatientPrescribers.objects.create(patient_id=self.kwargs.get('pk'),
+#                                                                 prescriber_id=self.kwargs.get('prescriber_id'))
+#
+#         print('>>>>>>>>>', patient_prescribers.id)
+#         return super()
 
 class PrescriptionCreateView(MedGuardianViewMixin):
     form_class = PrescriptionCreateForm
