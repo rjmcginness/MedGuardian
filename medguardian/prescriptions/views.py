@@ -99,10 +99,10 @@ class PrescriptionCreateView(MedGuardianViewMixin):
     template_name = 'prescription-create.html'
     success_url = '/medications'
 
-    def setup(self, request, *args, **kwargs):
-        form_kwargs = self.get_form_kwargs()
-        form_kwargs['pk'] = request.user.id
-        super().setup(request, *args, **kwargs)
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['pk'] = self.request.user.id
+        return kwargs
 
     def get(self, request, *arg, **kwargs):
         context = super(PrescriptionCreateView, self).get_context_data(**kwargs)

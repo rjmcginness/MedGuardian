@@ -100,10 +100,17 @@ class PrescriptionCreateForm(forms.ModelForm):
                    'is_active')
 
     def __init__(self, *args, **kwargs) -> None:
+
+        # Have to pop the pk out, before passing kwargs to super().__init__
+        patient_id = kwargs.pop('pk')
         super(PrescriptionCreateForm, self).__init__(*args, **kwargs)
-        context = self.get_context()
-        print('>>>>>>>', kwargs['pk'])
-        prescribers = PatientPrescribers.objects.filter(patient_id=context.get('pk'))
+        
+        ###### NEED TO CREATE A MANY TO MANY FIELD ON PATIENTS>  THIS IS CAUSES TOO MANY DB HITS
+        prescriber_ids = PatientPrescribers.objects.filter(patient_id=patient_id).values_list('prescriber_id')
+        prescribers.
+
+        print('>>>>>>>', prescribers)
+
         route_of_admins = RouteOfAdministration.objects.all()
         frequencies = AdministrationFrequency.objects.all()
         medications = Medication.objects.all()
