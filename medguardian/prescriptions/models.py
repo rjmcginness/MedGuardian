@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import constraints
 from src.user_model import ContactInformation
 from src.user_model import Address
 from src.user_model import Patient
@@ -148,35 +149,45 @@ class PrescriptionTransaction(models.Model):
 
 
 class PrescriptionRoute(models.Model):
-    prescription = models.ForeignKey(Prescription, primary_key=True, on_delete=models.CASCADE)
-    administration_route = models.ForeignKey(RouteOfAdministration, primary_key=True, on_delete=models.CASCADE)
+    prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
+    administration_route = models.ForeignKey(RouteOfAdministration, on_delete=models.CASCADE)
+    constraints.UniqueConstraint(fields=['prescription', 'administration_route'],
+                                 name='rx_route_unique')
 
 
 class PrescriptionFrequency(models.Model):
-    prescription = models.ForeignKey(Prescription, primary_key=True, on_delete=models.CASCADE)
-    frequency = models.ForeignKey(AdministrationFrequency, primary_key=True, on_delete=models.CASCADE)
+    prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
+    frequency = models.ForeignKey(AdministrationFrequency, on_delete=models.CASCADE)
+    constraints.UniqueConstraint(fields=['prescription', 'frequency'],
+                                 name='rx_frequency_unique')
 
 
 class PharmacyPharmacist(models.Model):
-    pharmacy = models.ForeignKey(Pharmacy, primary_key=True, on_delete=models.CASCADE)
-    pharmacist = models.ForeignKey(Pharmacist, primary_key=True, on_delete=models.CASCADE)
+    pharmacy = models.ForeignKey(Pharmacy, on_delete=models.CASCADE)
+    pharmacist = models.ForeignKey(Pharmacist, on_delete=models.CASCADE)
+    constraints.UniqueConstraint(fields=['pharmacy', 'pharmacist'],
+                                 name='pharmacist_pharmacy_unique')
 
 
 class PrescriptionAdminTime(models.Model):
     ######does this cascade to the RX??????
-    prescription = models.ForeignKey(Prescription, primary_key=True, on_delete=models.CASCADE)
-    administration_time = models.ForeignKey(AdministrationTime, primary_key=True, on_delete=models.CASCADE)
+    prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
+    administration_time = models.ForeignKey(AdministrationTime, on_delete=models.CASCADE)
+    constraints.UniqueConstraint(fields=['prescription', 'administration_time'],
+                                 name='rx_admin_time_unique')
 
 
 class PrescriptionMedication(models.Model):
-    prescription = models.ForeignKey(Prescription, primary_key=True, on_delete=models.CASCADE)
-    medication = models.ForeignKey(Medication, primary_key=True, on_delete=models.CASCADE)
+    prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
+    medication = models.ForeignKey(Medication, on_delete=models.CASCADE)
 
 
 class PharmacistTransaction(models.Model):
-    pharmacist = models.ForeignKey(Pharmacist, primary_key=True, on_delete=models.CASCADE)
-    transaction = models.ForeignKey(PrescriptionTransaction, primary_key=True, on_delete=models.CASCADE)
+    pharmacist = models.ForeignKey(Pharmacist, on_delete=models.CASCADE)
+    transaction = models.ForeignKey(PrescriptionTransaction, on_delete=models.CASCADE)
 
 class PatientPrescribers(models.Model):
-    patient = models.ForeignKey(Patient, primary_key=True, on_delete=models.CASCADE)
-    prescriber = models.ForeignKey(Prescriber, primary_key=True, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    prescriber = models.ForeignKey(Prescriber, on_delete=models.CASCADE)
+    constraints.UniqueConstraint(fields=['patient', 'prescriber'],
+                                 name='patient_prescriber_unique')

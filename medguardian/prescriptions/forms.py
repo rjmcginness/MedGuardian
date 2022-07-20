@@ -7,6 +7,7 @@ from .models import AdministrationFrequency
 from src.user_model import Address
 from src.user_model import ContactInformation
 from src.utils import states_tuple
+from medications.models import Medication
 
 
 
@@ -89,27 +90,42 @@ class PrescriptionCreateForm(forms.ModelForm):
     prescriber = forms.ChoiceField(choices=[])
     route_of_admin = forms.ChoiceField(choices=[])
     frequency = forms.ChoiceField(choices=[])
+    medication = forms.ChoiceField(choices=[])
     class Meta:
         model = Prescription
-        exclude = ('patient_id',
-                   'prescriber_id',
+        exclude = ('patient',
+                   'medications',
                    'signature',
                    'date_written',
                    'is_active')
 
     def __init__(self, *args, **kwargs) -> None:
         super(PrescriptionCreateForm, self).__init__(*args, **kwargs)
-        prescribers = PatientPrescribers.objects.filter(patient_id=kwargs['pk'])
+        context = self.get_context()
+        print('>>>>>>>', kwargs['pk'])
+        prescribers = PatientPrescribers.objects.filter(patient_id=context.get('pk'))
         route_of_admins = RouteOfAdministration.objects.all()
         frequencies = AdministrationFrequency.objects.all()
+        medications = Medication.objects.all()
         self.fields['prescriber'].choices = ((prescriber.id,
                                               prescriber.last_name + ' in ' + \
                                               prescriber.address.city) for prescriber in prescribers)
         self.fields['route_of_admin'].choices = ((route.id,
                                                            route.name) for route in route_of_admins)
         self.fields['frequency'].choices = ((freq.id, freq.name) for freq in frequencies)
+        self.fields['medication'].choices = ((medications.id, medication.generic_name +\
+                                               ' (' + medication.brand_name + ')') for medication in medications)
+        self.__patient_id = None
+
+    def set_patient_id(self, patient_id: int) -> None:
+        self.__patient_id = int(patient_id)
 
     def save(self, commit=True) -> Prescription:
         data = self.cleaned_data
+
+        prescriber_id = data['prescriber']
+        route = RouteOfAdministration.objects.get(id=data['route_of_admin'])
+        frequency = AdministrationFrequency.objects.get(id=data['frequency'])
+
 
 

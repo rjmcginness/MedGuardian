@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.shortcuts import reverse
 from django.views.generic import FormView
 from django.views.generic import TemplateView
 from django.views.generic import DetailView
@@ -58,7 +59,7 @@ class PrescriberSelectView(MedGuardianViewMixin):
                                                                 prescriber_id=self.kwargs.get('prescriber_id'))
 
         patient_prescribers.save()
-        print('>>>>>>>>>', patient_prescribers.id)
+
         context = {
             'pk': self.request.user.id,
             'prescriber_id': self.kwargs.get('prescriber_id')
@@ -97,5 +98,23 @@ class PrescriptionCreateView(MedGuardianViewMixin):
     form_class = PrescriptionCreateForm
     template_name = 'prescription-create.html'
     success_url = '/medications'
+
+    def setup(self, request, *args, **kwargs):
+        form_kwargs = self.get_form_kwargs()
+        form_kwargs['pk'] = request.user.id
+        super().setup(request, *args, **kwargs)
+
+    def get(self, request, *arg, **kwargs):
+        context = super(PrescriptionCreateView, self).get_context_data(**kwargs)
+
+        context.update({'pk': request.user.id})
+
+        return self.render_to_response(context)
+
+    def form_valid(self, form):
+        form.set_patient_id(self.request.user.id)
+        form.save()
+
+        return super().form_valid(form)
 
 
