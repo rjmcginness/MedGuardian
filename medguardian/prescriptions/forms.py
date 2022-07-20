@@ -2,6 +2,8 @@ from django import forms
 from .models import Prescriber
 from .models import Prescription
 from .models import PatientPrescribers
+from .models import RouteOfAdministration
+from .models import AdministrationFrequency
 from src.user_model import Address
 from src.user_model import ContactInformation
 from src.utils import states_tuple
@@ -82,4 +84,32 @@ class PrescriptionCreateForm(forms.ModelForm):
 class PatientPrescriberForm(forms.Form):
     patient_id = forms.IntegerField(widget=forms.HiddenInput())
     prescriber_id = forms.IntegerField(widget=forms.HiddenInput())
+
+class PrescriptionCreateForm(forms.ModelForm):
+    prescriber = forms.ChoiceField(choices=[])
+    route_of_admin = forms.ChoiceField(choices=[])
+    frequency = forms.ChoiceField(choices=[])
+    class Meta:
+        model = Prescription
+        exclude = ('patient_id',
+                   'prescriber_id',
+                   'signature',
+                   'date_written',
+                   'is_active')
+
+    def __init__(self, *args, **kwargs) -> None:
+        super(PrescriptionCreateForm, self).__init__(*args, **kwargs)
+        prescribers = PatientPrescribers.objects.filter(patient_id=kwargs['pk'])
+        route_of_admins = RouteOfAdministration.objects.all()
+        frequencies = AdministrationFrequency.objects.all()
+        self.fields['prescriber'].choices = ((prescriber.id,
+                                              prescriber.last_name + ' in ' + \
+                                              prescriber.address.city) for prescriber in prescribers)
+        self.fields['route_of_admin'].choices = ((route.id,
+                                                           route.name) for route in route_of_admins)
+        self.fields['frequency'].choices = ((freq.id, freq.name) for freq in frequencies)
+
+    def save(self, commit=True) -> Prescription:
+        data = self.cleaned_data
+
 

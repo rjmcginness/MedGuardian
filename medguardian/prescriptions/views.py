@@ -9,6 +9,7 @@ from .forms import PrescriberCreateForm
 from .forms import PrescriberSelectForm
 from .forms import PrescriptionCreateForm
 from .forms import PatientPrescriberForm
+from .forms import PrescriberCreateForm
 
 from .models import Prescriber
 from .models import PatientPrescribers
@@ -94,5 +95,7 @@ class PrescriberAddSuccessView(MedGuardianViewMixin):
 
 class PrescriptionCreateView(MedGuardianViewMixin):
     form_class = PrescriptionCreateForm
-    template_name = 'prescriptions/prescription-create.html'
+    template_name = 'prescription-create.html'
     success_url = '/medications'
+
+
