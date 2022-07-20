@@ -8,6 +8,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from .forms import PrescriberCreateForm
 from .forms import PrescriberSelectForm
 from .forms import PrescriptionCreateForm
+from .forms import PatientPrescriberForm
 
 from .models import Prescriber
 from .models import PatientPrescribers
@@ -68,8 +69,17 @@ class PrescriberView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     template_name = 'prescriber.html'
     
 
-class PrescriberAddSuccessView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+class PrescriberAddSuccessView(MedGuardianViewMixin):
+    form_class = PatientPrescriberForm
     template_name = 'prescriber-added.html'
+
+    def form_valid(self, form):
+        data = form.cleaned_data
+        pp_association = PatientPrescribers(patient_id=data['patient_id'],
+                                            prescriber_id=data['prescriber_id'])
+
+        pp_association.save()
+        return render(self.request, self.template_name)
 # class PrescriberAddSuccessView(MedGuardianViewMixin):
 #     form_class = PrescriberSelectForm
 #     template_name = 'prescriber-added.html'

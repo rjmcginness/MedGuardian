@@ -1,6 +1,7 @@
 from django import forms
 from .models import Prescriber
 from .models import Prescription
+from .models import PatientPrescribers
 from src.user_model import Address
 from src.user_model import ContactInformation
 from src.utils import states_tuple
@@ -76,3 +77,9 @@ class PrescriptionCreateForm(forms.ModelForm):
         exclude = ('id', 'patient_id', 'prescriber_id', 'is_active')
 
     # def save(self, commit=True):
+
+
+class PatientPrescriberForm(forms.Form):
+    patient_id = forms.IntegerField(widget=forms.HiddenInput())
+    prescriber_id = forms.IntegerField(widget=forms.HiddenInput())
+
