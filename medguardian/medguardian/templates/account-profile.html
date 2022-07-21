@@ -1,16 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <h1>
+        {%  if request.user.is_authenticated %}
+        {{ request.user.first_name }},
+        {% endif %}Your Medication Guardian is Here
+    </h1>
+    <br/>
+    <h2>Profile</h2>
     <div>First Name: {{ object.first_name }}</div>
     <div>Last Name: {{ object.last_name }}</div>
     <div>Username: {{ object.username }}</div>
     <div>Email: {{ object.email }}</div>
-    <h3>Address</h3>
+    <h4>Address</h4>
     <div>{{ object.address.street }}</div>
     <div>{{ object.address.street2 }}</div>
     <div>{{ object.address.city }}, {{ object.address.state_name }} {{ object.address.zip_code }}</div>
     <div>{{ object.address.county }}</div>
-    <h3>Contact Information</h3>
+    <h4>Contact Information</h4>
     <div>Home Phone: {{ object.contact_information.home_phone }}</div>
     <div>Mobile: {{ object.contact_information.mobile_phone }}</div>
     <div>Fax Number: {{ object.contact_information.fax_number }}</div>
