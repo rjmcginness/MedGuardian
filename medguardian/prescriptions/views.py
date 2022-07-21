@@ -3,6 +3,7 @@ from django.shortcuts import reverse
 from django.views.generic import FormView
 from django.views.generic import TemplateView
 from django.views.generic import DetailView
+from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
 
@@ -88,24 +89,28 @@ class PrescriberAddSuccessView(MedGuardianViewMixin):
     form_class = PatientPrescriberForm
     template_name = 'prescriber-added.html'
 
-    def form_valid(self, form):
-        data = form.cleaned_data
-        pp_association = PatientPrescribers(patient_id=data['patient_id'],
-                                            prescriber_id=data['prescriber_id'])
+    # def form_valid(self, form):
+    #     data = form.cleaned_data
+    #     pp_association = PatientPrescribers(patient_id=data['patient_id'],
+    #                                         prescriber_id=data['prescriber_id'])
+    #
+    #     pp_association.save()
+    #     return render(self.request, self.template_name)
 
-        pp_association.save()
-        return render(self.request, self.template_name)
-# class PrescriberAddSuccessView(MedGuardianViewMixin):
-#     form_class = PrescriberSelectForm
-#     template_name = 'prescriber-added.html'
-#     success_url = '/prescribers'
-#
-#     def form_valid(self, form):
-#         patient_prescribers = PatientPrescribers.objects.create(patient_id=self.kwargs.get('pk'),
-#                                                                 prescriber_id=self.kwargs.get('prescriber_id'))
-#
-#         print('>>>>>>>>>', patient_prescribers.id)
-#         return super()
+
+class PrescribersListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = Prescriber
+    paginate_by = 10
+
+    def test_func(self) -> bool:
+        return self.request.user.id == self.kwargs['pk']
+
+    def get_queryset(self):
+        return Prescriber.objects.filter(patients__id=self.kwargs.get('pk'))
+
+
+
+
 
 class PrescriptionCreateView(MedGuardianViewMixin):
     form_class = PrescriptionCreateForm

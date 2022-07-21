@@ -117,10 +117,8 @@ class PrescriptionCreateForm(forms.ModelForm):
         patient_id = kwargs.pop('pk')
         super(PrescriptionCreateForm, self).__init__(*args, **kwargs)
         
-        ###### NEED TO CREATE A MANY TO MANY FIELD ON PATIENTS>  THIS IS CAUSES TOO MANY DB HITS
+        # NEEDED TO CREATE A MANY TO MANY FIELD ON PATIENTS. OTHERWISE THIS CAUSES TOO MANY DB HITS
         prescribers = Prescriber.objects.filter(patients__id=patient_id)
-
-        print('>>>>>>>>>', prescribers.count())
 
         route_of_admins = RouteOfAdministration.objects.all()
         frequencies = AdministrationFrequency.objects.all()

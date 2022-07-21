@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Office Phone</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prescriber in prescibers %}
+            <tr>
+                <td>{{ prescriber.first_name }} {{ prescriber.last_name }}</td>
+                <td>
+                    {{ prescriber.address.street }}<br>
+                    {{ prescriber.address.street2 }}<br>
+                    {{ prescriber.address.city }} {{ prescriber.address.state }} {{ prescriber.address.zip_code }}
+                </td>
+                <td>{{ prescriber.contact_information.home_phone }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

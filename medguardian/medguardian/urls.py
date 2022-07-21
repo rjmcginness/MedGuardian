@@ -29,7 +29,7 @@ from .views import ProfileView
 from prescriptions.views import PrescriberCreateView
 from prescriptions.views import PrescriberSelectView
 from prescriptions.views import PrescriptionCreateView
-from prescriptions.views import PrescriberView
+from prescriptions.views import PrescribersListView
 from prescriptions.views import PrescriberAddSuccessView
 
 
@@ -56,7 +56,8 @@ urlpatterns = [
     path('accounts/<int:pk>/prescriptions/new', PrescriptionCreateView.as_view(), name='new_rx'),
     path('accounts/<int:pk>/prescribers/new', PrescriberCreateView.as_view(), name='new_prescriber'),
     path('accounts/<int:pk>/prescribers/select', PrescriberSelectView.as_view(), name='select_prescriber'),
-    path('account/<int:pk>/prescriber/<int:prescriber_id>/added', PrescriberAddSuccessView.as_view(), name='add_prescriber'),
+    path('accounts/<int:pk>/prescribers', PrescribersListView.as_view(), name='prescribers'),
+    path('account/<int:pk>/prescriber/<int:prescriber_id>/added', PrescriberAddSuccessView.as_view(), name='prescriber_add_success'),
     # path('accounts/<int:pk>/prescribers/<int:prescriber_id>',
     #      PrescriberView.as_view(),
     #      name='prescriber'),
