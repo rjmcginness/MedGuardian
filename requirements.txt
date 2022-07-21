@@ -23,6 +23,7 @@ python-decouple==3.6
 pytz==2022.1
 requests==2.28.0
 screen==1.0.1
+SQLAlchemy==1.4.39
 sqlparse==0.4.2
 tomli==2.0.1
 twilio==7.9.3
