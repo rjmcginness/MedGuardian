@@ -20,6 +20,23 @@
       .navbar-brand {
         font-size: 25px;
       }
+      .dropdown-menu li {
+        position: relative;
+      }
+      .dropdown-menu .dropdown-submenu {
+          display: none;
+          position: absolute;
+          left: 100%;
+          top: -7px;
+      }
+      .dropdown-menu .dropdown-submenu-left {
+          right: 100%;
+          left: auto;
+      }
+      .dropdown-menu > li:hover > .dropdown-submenu {
+        display: block;
+
+      }
     </style>
   </head>
   <body>
@@ -40,13 +57,27 @@
                       <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Tools
                       </a>
-                      <ul class="dropdown-menu dropdown-menu-dark">
-                        <li><a class="dropdown-item" href="/{{ request.user.pk }}/medications">Medications</a></li>
-                        <li><a class="dropdown-item" href="/{{ request.user.pk }}/prescriptions">Prescribers</a></li>
-                      </ul>
+                      <ul class="dropdown-menu  aria-labelledby="navbarDropdownMenuLink"">
+                        <li><!--Sub Menu-->
+                            <a class="dropdown-item" href="#">
+                              Medications &raquo;
+                            </a>
+                            <ul class="dropdown-menu dropdown-submenu">
+                              <li><a class="dropdown-item" href="/{{ request.user.pk }}/medications">Medications</a></li>
+                            </ul>
+                        </li>
+                        <li><!--Sub Menu-->
+                            <a class="dropdown-item" href="#">
+                              Prescribers &raquo;
+                            </a>
+                            <ul class="dropdown-menu dropdown-submenu">
+                              <li><a class="dropdown-item" href="/{{ request.user.pk }}/prescriptions">Prescribers</a></li>
+                            </ul>
+                        </li>
+                        </ul>
                   </li>
                   {% else %}
-                  <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                  <a class="nav-link" href="/">Home <span class="sr-only"></span></a>
                   {% endif %}
                   </li>
                   <li class="nav-item">
