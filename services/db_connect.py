@@ -14,7 +14,7 @@ class DBWrapper:
 
     def __init__(self, db_url: str) -> None:
         self.url = db_url
-        self.__engine = sa.create_engine(db_url, echo=True, future=True)
+        self.__engine = sa.create_engine(db_url, echo=False, future=True)
 
 
     @property
