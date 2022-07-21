@@ -118,7 +118,7 @@ class PrescriptionCreateForm(forms.ModelForm):
         super(PrescriptionCreateForm, self).__init__(*args, **kwargs)
         
         # NEEDED TO CREATE A MANY TO MANY FIELD ON PATIENTS. OTHERWISE THIS CAUSES TOO MANY DB HITS
-        prescribers = Prescriber.objects.filter(patients__id=patient_id)
+        prescribers = Prescriber.objects.filter(patients__id=patient_id).order_by('last_name')
 
         route_of_admins = RouteOfAdministration.objects.all()
         frequencies = AdministrationFrequency.objects.all()

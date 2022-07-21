@@ -100,14 +100,19 @@ class PrescriberAddSuccessView(MedGuardianViewMixin):
 
 class PrescribersListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Prescriber
+    template_name = 'prescriber_list.html'
     paginate_by = 10
 
     def test_func(self) -> bool:
         return self.request.user.id == self.kwargs['pk']
 
+    ######WORKING HERE: FINISH
     def get_queryset(self):
-        return Prescriber.objects.filter(patients__id=self.kwargs.get('pk'))
+        print('>>>>>>>>>', Prescriber.objects.filter(patients__id=self.request.user.id).order_by('last_name').count())
+        return Prescriber.objects.filter(patients__id=self.request.user.id).order_by('last_name')
 
+    def get_context_object_name(self, object_list):
+        return 'prescribers'
 
 
 

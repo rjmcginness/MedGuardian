@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <h3>Your Prescribers</h3>
     <table>
         <thead>
             <tr>
@@ -10,12 +11,14 @@
             </tr>
         </thead>
         <tbody>
-            {% for prescriber in prescibers %}
+            {% for prescriber in prescribers %}
             <tr>
                 <td>{{ prescriber.first_name }} {{ prescriber.last_name }}</td>
                 <td>
                     {{ prescriber.address.street }}<br>
+                    {% if prescriber.address.street2 %}
                     {{ prescriber.address.street2 }}<br>
+                    {% endif %}
                     {{ prescriber.address.city }} {{ prescriber.address.state }} {{ prescriber.address.zip_code }}
                 </td>
                 <td>{{ prescriber.contact_information.home_phone }}</td>
