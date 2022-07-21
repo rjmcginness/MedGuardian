@@ -26,7 +26,14 @@ class PrescriberCreateForm(forms.ModelForm):
 
     class Meta:
         model = Prescriber
-        exclude = ('address', 'contact_information')
+        exclude = ('patients', 'address', 'contact_information')
+
+    def __init__(self, *args, **kwargs) -> None:
+        super(PrescriberCreateForm, self).__init__(*args, **kwargs)
+        self.__patient_id = None
+
+    def set_patient_id(self, patient_id: int):
+        self.__patient_id = patient_id
 
     def save(self, commit=True) -> Prescriber:
         data = self.cleaned_data
@@ -58,6 +65,11 @@ class PrescriberCreateForm(forms.ModelForm):
                                )
 
         prescriber.save()
+
+        patient_prescribers = PatientPrescribers.objects.create(patient_id=self.__patient_id,
+                                                                prescriber_id=prescriber.id)
+
+        patient_prescribers.save()
 
         return prescriber
 
@@ -106,10 +118,9 @@ class PrescriptionCreateForm(forms.ModelForm):
         super(PrescriptionCreateForm, self).__init__(*args, **kwargs)
         
         ###### NEED TO CREATE A MANY TO MANY FIELD ON PATIENTS>  THIS IS CAUSES TOO MANY DB HITS
-        prescriber_ids = PatientPrescribers.objects.filter(patient_id=patient_id).values_list('prescriber_id')
-        prescribers.
+        prescribers = Prescriber.objects.filter(patients__id=patient_id)
 
-        print('>>>>>>>', prescribers)
+        print('>>>>>>>>>', prescribers.count())
 
         route_of_admins = RouteOfAdministration.objects.all()
         frequencies = AdministrationFrequency.objects.all()
@@ -122,10 +133,6 @@ class PrescriptionCreateForm(forms.ModelForm):
         self.fields['frequency'].choices = ((freq.id, freq.name) for freq in frequencies)
         self.fields['medication'].choices = ((medications.id, medication.generic_name +\
                                                ' (' + medication.brand_name + ')') for medication in medications)
-        self.__patient_id = None
-
-    def set_patient_id(self, patient_id: int) -> None:
-        self.__patient_id = int(patient_id)
 
     def save(self, commit=True) -> Prescription:
         data = self.cleaned_data

@@ -6,7 +6,6 @@ from django.views.generic import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
 
-from .forms import PrescriberCreateForm
 from .forms import PrescriberSelectForm
 from .forms import PrescriptionCreateForm
 from .forms import PatientPrescriberForm
@@ -28,7 +27,21 @@ class MedGuardianViewMixin(LoginRequiredMixin, UserPassesTestMixin, FormView):
 class PrescriberCreateView(MedGuardianViewMixin):
     form_class = PrescriberCreateForm
     template_name = 'prescriber-create.html'
-    success_url = '/prescribers'
+    success_url = '/accounts/<int:pk>/prescribers/success'
+
+    # def get_form_kwargs(self):
+    #     kwargs = super(PrescriberCreateView, self).get_form_kwargs()
+    #     kwargs['pk'] = self.request.user.id
+    #     return kwargs
+
+    def form_valid(self, form):
+        form.set_patient_id(self.request.user.id)
+        form.save()
+        context = {
+            'pk': self.request.user.id,
+            'prescriber_id': self.kwargs.get('prescriber_id')
+        }
+        return render(self.request, reverse('prescriber_add_success'), context)
 
 
 class PrescriberSelectView(MedGuardianViewMixin):
@@ -99,8 +112,8 @@ class PrescriptionCreateView(MedGuardianViewMixin):
     template_name = 'prescription-create.html'
     success_url = '/medications'
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
+    def get_form_kwargs(self, *args, **kwargs):
+        kwargs = super(PrescriptionCreateView, self).get_form_kwargs(*args, **kwargs)
         kwargs['pk'] = self.request.user.id
         return kwargs
 

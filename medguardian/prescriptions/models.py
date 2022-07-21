@@ -18,7 +18,10 @@ class Prescriber(models.Model):
                                  help_text='State controlled substance license number')
     contact_information = models.ForeignKey(ContactInformation, on_delete=models.CASCADE)
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
-
+    patients = models.ManyToManyField('src.Patient', through='PatientPrescribers')
+    class Meta:
+        constraints = [constraints.UniqueConstraint(fields=('federal_dea', 'address_id'),
+                                                    name='prescriber_address_unique')]
 
 class RouteOfAdministration(models.Model):
     name = models.CharField(max_length=80,
@@ -189,5 +192,6 @@ class PharmacistTransaction(models.Model):
 class PatientPrescribers(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     prescriber = models.ForeignKey(Prescriber, on_delete=models.CASCADE)
-    constraints.UniqueConstraint(fields=['patient', 'prescriber'],
-                                 name='patient_prescriber_unique')
+    class Meta:
+        constraints = [constraints.UniqueConstraint(fields=['patient', 'prescriber'],
+                                                    name='patient_prescriber_unique')]
