@@ -33,10 +33,17 @@ from prescriptions.views import PrescribersListView
 from prescriptions.views import PrescriberAddSuccessView
 
 
+
+med_router = medications.views.MedicationRouter(trailing_slash=False)
+med_router.register(prefix='medications',
+                    viewset=medications.views.ActiveMedProfileViewSet,
+                    basename='medications'
+                   )
+
 router = routers.DefaultRouter()
-router.register('medications',
-                medications.views.ActiveMedProfileViewSet,
-                basename='medications')
+# router.register('medications',
+#                 medications.views.ActiveMedProfileViewSet,
+#                 basename='medications')
 # router.register('medications', medications.views.MedicationViewSet)
 router.register('medication-products',
                 medications.views.MedicationProductDetailsViewSet)
@@ -46,6 +53,7 @@ router.register('medication-products',
 urlpatterns = [
     path('', FrontPageView.as_view()),
     path('', include(router.urls)),
+    path('', include(med_router.urls)),
     path('register/', RegistrationView.as_view(), name='register'),
     path('account_created',
          RegistrationSuccessView.as_view(),
@@ -62,6 +70,7 @@ urlpatterns = [
     #      PrescriberView.as_view(),
     #      name='prescriber'),
     # path('accounts/<int:pk>/prescribers/success', PrescriberAddSuccessView.as_view(), name='prescriber_add_success'),
+    # path('accounts/<int:pk>/medications', medications.views.MedicationListView, name='medications'),
     path('medication-search/', medications.views.medication_search),
     path('medications/create', medications.views.medication_create),
 

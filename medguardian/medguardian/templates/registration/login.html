@@ -16,28 +16,33 @@
 {% endfor %}
 {% endif %}
 
-<div id="content-main">
+<div class="row justify-content-md-center" id="content-main">
+    <div class="container">
 
-<form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
-  <div class="form-row">
-    {{ form.username.errors }}
-    {{ form.username.label_tag }} {{ form.username }}
-  </div>
-  <div class="form-row">
-    {{ form.password.errors }}
-    {{ form.password.label_tag }} {{ form.password }}
-    <input type="hidden" name="next" value="{{ next }}">
-  </div>
-  {% url 'admin_password_reset' as password_reset_url %}
-  {% if password_reset_url %}
-  <div class="password-reset-link">
-    <a href="{{ password_reset_url }}">{% translate 'Forgotten your password or username?' %}</a>
-  </div>
-  {% endif %}
-  <div class="submit-row">
-    <input type="submit" value="{% translate 'Log in' %}">
-  </div>
-</form>
-
+        <div class="position-absolute top-50 start-50 translate-middle">
+            <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+              <div class="form-row">
+                {{ form.username.errors }}
+                {{ form.username.label_tag }} {{ form.username }}
+              </div>
+              <div class="form-row">
+                {{ form.password.errors }}
+                {{ form.password.label_tag }} {{ form.password }}
+                <input type="hidden" name="next" value="{{ next }}">
+              </div>
+              {% url 'admin:admin_password_reset' as password_reset_url %}
+              {% if password_reset_url %}
+              <div class="password-reset-link">
+                <a href="{{ password_reset_url }}">{% translate 'Forgotten your password or username?' %}</a>
+              </div>
+              {% endif %}
+              <div class="submit-row">
+                <input type="submit" value="{% translate 'Log in' %}">
+              </div>
+            </form>
+            <br/>
+            <a href="{% url 'register' %}">Sign Up</a>
+        </div>
+    </div>
 </div>
 {% endblock %}

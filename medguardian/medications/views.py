@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
+from rest_framework import routers
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.renderers import TemplateHTMLRenderer
@@ -35,13 +36,26 @@ def medication_create(request):
     return render(request, 'medication-create.html', {'form': form})
 
 
+class MedicationRouter(routers.SimpleRouter):
+    '''
+        Router for medication-related views and actions
+    '''
+    routes = [routers.Route(url=r'^/accounts/{lookup}/{prefix}$',
+                           mapping={'get': 'list'},
+                           name='{basename}-list',
+                           detail=False,
+                           initkwargs={'suffix':'List'}),]
+
+
 class ActiveMedProfileViewSet(LoginRequiredMixin, viewsets.ViewSet):
     serializer_class = MedicationSerializer
     renderer_classes = [TemplateHTMLRenderer]
+    permission_classes = [permissions.IsAuthenticated,]
+    lookup_field = 'id'
 
     def list(self, request):
         rx_list = Prescription.objects.filter(
-                    patient_id=request.user.id).filter(is_active=True)
+                    patient_id=request.user.id, is_active=True)
         queryset = [rx.medication_set for rx in rx_list]
         serializer = self.serializer_class(queryset, many=True)
         return Response({'medications': serializer.data},

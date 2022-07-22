@@ -63,7 +63,7 @@
                               Medications &raquo;
                             </a>
                             <ul class="dropdown-menu dropdown-submenu">
-                              <li><a class="dropdown-item" href="/{{ request.user.pk }}/medications">Medications</a></li>
+                              <li><a class="dropdown-item" href="{% url 'medications-list' pk=request.user.id %}">Medications</a></li>
                             </ul>
                         </li>
                         <li><!--Sub Menu-->
