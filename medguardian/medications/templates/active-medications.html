@@ -5,17 +5,29 @@
     <table>
         <thead>
             <tr>
+                <th>Date Written</th>
                 <th>Generic Name</th>
                 <th>Brand Name</th>
-                <th>Medication Stregth</th>
+                <th>Medication Strength</th>
+                <th>Route of Administration</th>
+                <th>Frequency</th>
+                <th>Prescriber</th>
+                <th>Administration Times</th>
+                <th> </th>
+                <th> </th>
             </tr>
         </thead>
         <tbody>
-        {% for medication in medications %}
+        {% for prescription in prescriptions %}
             <tr>
-                <td>{{ medication.generic_name }}</td>
+                <td>
+                    {% for medication in prescriptions.medications %}
+                    {{ medication.generic_name }} ({{ medication.brand_name }}) {{ medication.strength }}
+                    {% endfor %}
+                </td>
                 <td>{{ medication.brand_name }}</td>
                 <td>{{ medication.strength }} {{ medication.strength_units }}</td>
+                <td></td>
             </tr>
         {% endfor %}
         </tbody>

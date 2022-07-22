@@ -16,6 +16,8 @@ class Prescriber(models.Model):
                                    help_text='DEA Number')
     state_dea = models.CharField(max_length=20,
                                  help_text='State controlled substance license number')
+    credentials = models.CharField(max_length=20, null=True, blank=True)
+    specialty = models.CharField(max_length=50, null=True, blank=True)
     contact_information = models.ForeignKey(ContactInformation, on_delete=models.CASCADE)
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
     patients = models.ManyToManyField('src.Patient', through='PatientPrescribers')
@@ -85,6 +87,9 @@ class Prescription(models.Model):
     is_active = models.BooleanField(default=True,
                                     help_text='Is this prescription still active')
     routes = models.ManyToManyField('RouteOfAdministration', through='PrescriptionRoute')
+
+    #####################################################################################
+    ######SHOULD THIS BE A REFERENCE TO A MEDICATION PRODUCT DETAILS< WHICH REFERENCES MEDICATION???
     medications = models.ManyToManyField('medications.Medication', through='PrescriptionMedication')
     administration_times = models.ManyToManyField('AdministrationTime', through='PrescriptionAdminTime')
     frequencies = models.ManyToManyField('AdministrationFrequency', through='PrescriptionFrequency')

@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from django.shortcuts import reverse
 from django.views.generic import FormView
-from django.views.generic import TemplateView
 from django.views.generic import DetailView
-from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
+from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework import permissions
 
 from .forms import PrescriberSelectForm
 from .forms import PrescriptionCreateForm
@@ -14,6 +16,9 @@ from .forms import PrescriberCreateForm
 
 from .models import Prescriber
 from .models import PatientPrescribers
+from .models import Prescription
+from .serializers import PrescriberSerializer
+from .serializers import PrescriptionSerializer
 
 
 class MedGuardianViewMixin(LoginRequiredMixin, UserPassesTestMixin, FormView):
@@ -98,21 +103,34 @@ class PrescriberAddSuccessView(MedGuardianViewMixin):
     #     return render(self.request, self.template_name)
 
 
-class PrescribersListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
-    model = Prescriber
-    template_name = 'prescriber_list.html'
-    paginate_by = 10
+class PrescribersListView(LoginRequiredMixin, UserPassesTestMixin, generics.ListAPIView):
+    serializer_class = PrescriberSerializer
+    renderer_classes = [TemplateHTMLRenderer]
+    permission_classes = [permissions.IsAuthenticated,]
 
     def test_func(self) -> bool:
         return self.request.user.id == self.kwargs['pk']
 
-    ######WORKING HERE: FINISH
-    def get_queryset(self):
-        print('>>>>>>>>>', Prescriber.objects.filter(patients__id=self.request.user.id).order_by('last_name').count())
-        return Prescriber.objects.filter(patients__id=self.request.user.id).order_by('last_name')
+    def list(self, request, *args, **kwargs):
+        prescribers = Prescriber.objects.filter(patients__id=request.user.id)
+        serializer = self.serializer_class(prescribers, many=True)
+        return Response({'prescribers': serializer.data},
+                        template_name='prescriber_list.html')
 
-    def get_context_object_name(self, object_list):
-        return 'prescribers'
+    # model = Prescriber
+    # template_name = 'prescriber_list.html'
+    # paginate_by = 10
+
+
+
+    # ######WORKING HERE: FINISH
+    # def get_queryset(self):
+    #     print('>>>>>>>>>', Prescriber.objects.filter(patients__id=self.request.user.id).order_by('last_name').count())
+    #     return Prescriber.objects.filter(patients__id=self.request.user.id).order_by('last_name')
+    #
+    # def get_context_object_name(self, object_list):
+    #     return 'prescribers'
+
 
 
 
@@ -141,3 +159,18 @@ class PrescriptionCreateView(MedGuardianViewMixin):
         return super().form_valid(form)
 
 
+class ActiveMedProfileViewSet(LoginRequiredMixin, UserPassesTestMixin, generics.ListAPIView):
+    serializer_class = PrescriptionSerializer
+    renderer_classes = [TemplateHTMLRenderer]
+    permission_classes = [permissions.IsAuthenticated,]
+
+    def test_func(self) -> bool:
+        return self.request.user.id == self.kwargs['pk']
+
+    def list(self, request, *args, **kwargs):
+        rx_list = Prescription.objects.filter(
+                    patient_id=request.user.id, is_active=True)
+        # queryset = [rx.medication_set for rx in rx_list]
+        serializer = self.serializer_class(rx_list, many=True)
+        return Response({'prescriptions': serializer.data},
+                        template_name='active-medications.html')

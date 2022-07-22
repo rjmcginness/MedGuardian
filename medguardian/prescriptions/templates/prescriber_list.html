@@ -6,14 +6,18 @@
         <thead>
             <tr>
                 <th>Name</th>
+                <th>Specialty</th>
                 <th>Address</th>
                 <th>Office Phone</th>
+                <th> </th>
+                <th> </th>
             </tr>
         </thead>
         <tbody>
             {% for prescriber in prescribers %}
             <tr>
-                <td>{{ prescriber.first_name }} {{ prescriber.last_name }}</td>
+                <td>{{ prescriber.first_name }} {{ prescriber.last_name }} {{ prescriber.credentials }} }}</td>
+                <td>{{ prescriber.specialty }}</td>
                 <td>
                     {{ prescriber.address.street }}<br>
                     {% if prescriber.address.street2 %}
@@ -22,6 +26,19 @@
                     {{ prescriber.address.city }} {{ prescriber.address.state }} {{ prescriber.address.zip_code }}
                 </td>
                 <td>{{ prescriber.contact_information.home_phone }}</td>
+                <td>
+                    <form method="GET" action="{% url 'edit_prescriber' pk=request.user.id prescriber_id=prescriber.id %}">
+                        {% csrf_token %}
+                        <input type="submit" value="Edit"/>
+                    </form>
+                </td>
+                <td>
+                    <form method="PATCH" action="{% url 'remove_prescriber' pk=request.user.id prescriber_id=prescriber.id %}">
+                        {% csrf_token %}
+                        <input type="submit" value="Delete"/>
+                    </form>
+                    <!--ADD AJAX/JQUERY HERE TO SEND PATCH-->
+                </td>
             </tr>
             {% endfor %}
         </tbody>
