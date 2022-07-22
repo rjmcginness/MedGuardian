@@ -1,0 +1,4 @@
+'daily','da','once per daily',false,1,'day'
+'twice daily','bid','two times per day',false,2,'day'
+'three times daily','tid','three times per day',false,3,'day'
+'every six hours','q6h','every 6 hours',false,6,'hours'

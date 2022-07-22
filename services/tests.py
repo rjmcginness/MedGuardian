@@ -1,8 +1,11 @@
 import pytest
 from decouple import config
 from datetime import datetime
-from db_connect import DBWrapper
-from db_connect import make_db_url
+# from db_connect import DBWrapper
+# from db_connect import make_db_url
+
+from .db_connect import DBWrapper
+from .db_connect import make_db_url
 
 def test_db_connect():
     db_name = config('DB_NAME')
