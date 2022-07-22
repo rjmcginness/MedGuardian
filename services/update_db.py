@@ -2,44 +2,14 @@
     Used to read data files with prescription component data
     to load and update the database
 """
-
 from decouple import config
 
-# from db_connect import DBWrapper
-# from db_connect import make_db_url
-# from db_connect import DBWrapperError
-# from service_utils import Clock
-
-from .db_connect import DBWrapper
-from .db_connect import make_db_url
-from .db_connect import DBWrapperError
 from .service_utils import Clock
-
-def get_db():
-    db_name = config('DB_NAME')
-    db_user = config('DB_USER')
-    db_password = config('DB_PASSWORD')
-    db_host = config('DB_HOST')
-    db_port = config('DB_PORT')
-
-    return  DBWrapper(make_db_url(db_user + 'ql',
-                                  'psycopg2',
-                                  db_user,
-                                  db_password,
-                                  db_host,
-                                  db_port,
-                                  db_name),
-                     )
-
-def execute_statement(db, stmt: str, error_msg: str) -> None:
-    try:
-        db.execute_statement(stmt)
-    except DBWrapperError as e:
-        print(error_msg + '\n', e)
+from .db_access import get_db
+from .db_access import execute_statement
 
 def update_admin_routes(db, data_file_name: str) -> None:
 
-    routes = []
     with open(data_file_name, 'rt') as f:
         routes = [line for line in f]
 
@@ -78,7 +48,6 @@ def create_administration_times(db) -> None:
 
 
 def update_admin_frequencies(db, data_file_name: str) -> None:
-    frequencies = []
     with open(data_file_name, 'rt') as f:
         frequencies = [line for line in f]
 
@@ -100,11 +69,18 @@ def update_admin_frequencies(db, data_file_name: str) -> None:
 
 
 if __name__ == '__main__':
-    # routes_file = config('ADMIN_ROUTE_FILE')
-    # db = get_db()
-    # update_admin_routes(db, routes_file)
+    '''
+        UPDATE DATABASE SERVICE
+        uses: load or reload tables only read by user
+    '''
 
+    routes_file = config('ADMIN_ROUTE_FILE')
+    frequencies_file = config('ADMIN_FREQ_FILE')
+
+    # get db connection
     db = get_db()
-    create_administration_times(None)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    # run updates
+    update_admin_routes(db, routes_file)
+    create_administration_times(db)
+    update_admin_frequencies(db, frequencies_file)
