@@ -109,7 +109,10 @@ class PrescriptionCreateForm(forms.ModelForm):
                    'medications',
                    'signature',
                    'date_written',
-                   'is_active')
+                   'is_active',
+                   'routes',
+                   'administration_times',
+                   'frequencies')
 
     def __init__(self, *args, **kwargs) -> None:
 

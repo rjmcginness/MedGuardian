@@ -1,5 +1,7 @@
 from django.db import models
 from django.db.models import constraints
+
+import src.user_model
 from src.user_model import ContactInformation
 from src.user_model import Address
 from src.user_model import Patient
@@ -197,6 +199,19 @@ class PharmacistTransaction(models.Model):
 class PatientPrescribers(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     prescriber = models.ForeignKey(Prescriber, on_delete=models.CASCADE)
+
     class Meta:
         constraints = [constraints.UniqueConstraint(fields=['patient', 'prescriber'],
                                                     name='patient_prescriber_unique')]
+
+
+class ContactTimes(models.Model):
+    contact_id = models.ForeignKey(src.user_model.ContactInformation,
+                                   on_delete=models.CASCADE)
+    administration_time_id = models.ForeignKey(AdministrationTime,
+                                               on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [constraints.UniqueConstraint(fields=['contact_id', 'administration_time_id'],
+                                                    name='contact_time_unique'),
+                      ]
