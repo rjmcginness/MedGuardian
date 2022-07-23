@@ -3,6 +3,12 @@
     to load and update the database
 """
 from decouple import config
+import csv
+
+######FOR TESTING
+# from service_utils import Clock
+# from db_access import get_db
+# from db_access import execute_statement
 
 from .service_utils import Clock
 from .db_access import get_db
@@ -68,19 +74,69 @@ def update_admin_frequencies(db, data_file_name: str) -> None:
     execute_statement(db, stmt, 'Error occurred on insert.  check duplicate entry')
 
 
+def process_strength(strength: str) -> tuple:
+    '''
+        Removes comments from medication strength data and
+        separates numeric strength from units.
+        :param strength: string containing data representing a
+                         medication strength
+        :return: tuple representing the medication strength as a value
+                 and units
+    '''
+    # remove FDA comments
+    if '**' in strength:
+        idx = strength.index('*')
+        strength = strength[idx].strip()
+
+    # remove quotes
+    if '"' in strength:
+        strength.replace('"', '')
+
+    # dump portions after the ; - these are percentages, etc
+    if ';' in strength:
+        idx = strength.index(';')
+        strength = strength[idx].strip()
+
+    ###### separate strength from units
+    ######FINISH THIS - THIS IS NOT CORRECT
+    return (strength, strength)
+
+
+def process_medication_data(med_file) -> str:
+    reader = csv.DictReader(med_file, delimiter='\t')
+
+    values = []
+    for medication in reader:
+        medication['Strength'] = process_strength(medication['Strength'])
+        values.append
+
+
+
+
+
+
+
+def update_medications(db, date_file_name: str) -> None:
+    with open(data_file_file, 'rt') as med_file:
+        values_str = process_medication_data(med_file)
+
+
 if __name__ == '__main__':
     '''
         UPDATE DATABASE SERVICE
         uses: load or reload tables only read by user
     '''
 
-    routes_file = config('ADMIN_ROUTE_FILE')
-    frequencies_file = config('ADMIN_FREQ_FILE')
+    # routes_file = config('ADMIN_ROUTE_FILE')
+    # frequencies_file = config('ADMIN_FREQ_FILE')
+    #
+    # # get db connection
+    # db = get_db()
+    #
+    # # run updates
+    # update_admin_routes(db, routes_file)
+    # create_administration_times(db)
+    # update_admin_frequencies(db, frequencies_file)
 
-    # get db connection
-    db = get_db()
-
-    # run updates
-    update_admin_routes(db, routes_file)
-    create_administration_times(db)
-    update_admin_frequencies(db, frequencies_file)
+    medication_file = config('MEDICATION_DATA_FILE')
+    update_medications(None, medication_file)

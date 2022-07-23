@@ -30,3 +30,11 @@ def test_update_admin_frequencies():
     frequency = db.execute_statement("SELECT * FROM prescriptions_administrationfrequency WHERE abbreviation='bid'")
 
     assert frequency.first().abbreviation == "bid"
+
+
+def test_process_medication_data():
+    from .update_db import process_medication_data
+    with open('../data/medications.txt', 'rt') as f:
+        result = process_medication_data(f)
+
+    assert result > 0
