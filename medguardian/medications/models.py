@@ -7,10 +7,12 @@ class Medication(models.Model):
     brand_name = models.CharField(max_length=128,
                                   blank=True,
                                   help_text='The brand name of the medication')
-    strength = models.FloatField(help_text='The strength per dosage unit')
+    strength_text = models.CharField(max_length=80) # full text with value and units, useful for concentrations
+    strength = models.FloatField(help_text='The strength per dosage unit', null=True, blank=True)
     strength_units = models.CharField(max_length=(20),
-                                      default='mg',
-                                      help_text='The units of measure for the medication strength')
+                                      help_text='The units of measure for the medication strength',
+                                      null=True,
+                                      blank=True)
     dosage_form = models.CharField(max_length=80,
                                    default='tablet',
                                    help_text='The dosage form of the medication')

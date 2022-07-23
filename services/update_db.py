@@ -5,11 +5,6 @@
 from decouple import config
 import csv
 
-######FOR TESTING
-# from service_utils import Clock
-# from db_access import get_db
-# from db_access import execute_statement
-
 from .service_utils import Clock
 from .db_access import get_db
 from .db_access import execute_statement
@@ -74,13 +69,12 @@ def update_admin_frequencies(db, data_file_name: str) -> None:
     execute_statement(db, stmt, 'Error occurred on insert.  check duplicate entry')
 
 
-def process_strength(strength: str) -> tuple:
+def preprocess_strength(strength: str) -> tuple:
     '''
-        Removes comments from medication strength data and
-        separates numeric strength from units.
+        Removes comments from medication strength data.
         :param strength: string containing data representing a
                          medication strength
-        :return: tuple representing the medication strength as a value
+        :return: string representing the medication strength: value
                  and units
     '''
     # remove FDA comments
@@ -97,9 +91,22 @@ def process_strength(strength: str) -> tuple:
         idx = strength.index(';')
         strength = strength[idx].strip()
 
-    ###### separate strength from units
-    ######FINISH THIS - THIS IS NOT CORRECT
-    return (strength, strength)
+    return strength
+
+
+def process_strength(strength: str) -> tuple:
+    '''
+        Splits out the value and units for medication strength.
+        Handles concentrations and medications more than one
+        active ingredient
+        :param strength: string containing unprocessed medications
+               strength data
+        :return: tuple containing the dicts of medication strengths
+    '''
+
+    ########################FINISH
+    ######ONLY PERFORMS PREPROCESSING, NOT COMPLETE
+    return preprocess_strength(strength)
 
 
 def process_medication_data(med_file) -> str:
@@ -107,18 +114,27 @@ def process_medication_data(med_file) -> str:
 
     values = []
     for medication in reader:
-        medication['Strength'] = process_strength(medication['Strength'])
-        values.append
+        strength = process_strength(medication['Strength'])
 
+        ######THIS DOES NOT HAVE STRENGTH VALUE AND UNITS SEPARATED
+        values_str = ("'" + medication['ActiveIngredient'] + "'",
+                      "'" + medication['DrugName'] + "'",
+                      "'" + strength + "'",
+                      "'" + medication['Form'] + "'")
+        values.append('(' + ','.join(values_str) + ')')
 
-
-
-
+    return ','.join(values)
 
 
 def update_medications(db, date_file_name: str) -> None:
-    with open(data_file_file, 'rt') as med_file:
+    with open(date_file_name, 'rt') as med_file:
         values_str = process_medication_data(med_file)
+
+    stmt = 'TRUNCATE medications_medication CASCADE;'
+    stmt += 'INSERT INTO medications_medication '
+    stmt += f'VALUES (generic_name, brand_name, strength_text, dosage_form) {values_str}'
+
+    execute_statement(db, stmt, 'Error updating medications in db')
 
 
 if __name__ == '__main__':
@@ -127,16 +143,15 @@ if __name__ == '__main__':
         uses: load or reload tables only read by user
     '''
 
-    # routes_file = config('ADMIN_ROUTE_FILE')
-    # frequencies_file = config('ADMIN_FREQ_FILE')
-    #
-    # # get db connection
-    # db = get_db()
-    #
-    # # run updates
-    # update_admin_routes(db, routes_file)
-    # create_administration_times(db)
-    # update_admin_frequencies(db, frequencies_file)
-
+    routes_file = config('ADMIN_ROUTE_FILE')
+    frequencies_file = config('ADMIN_FREQ_FILE')
     medication_file = config('MEDICATION_DATA_FILE')
-    update_medications(None, medication_file)
+
+    # get db connection
+    db = get_db()
+
+    # run updates
+    update_admin_routes(db, routes_file)
+    create_administration_times(db)
+    update_admin_frequencies(db, frequencies_file)
+    update_medications(db, medication_file)

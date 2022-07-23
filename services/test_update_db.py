@@ -4,6 +4,7 @@ from .update_db import get_db
 from .update_db import update_admin_routes
 from .update_db import create_administration_times
 from .update_db import update_admin_frequencies
+from .update_db import update_medications
 
 def test_update_admin_routes():
     db = get_db()
@@ -37,4 +38,14 @@ def test_process_medication_data():
     with open('../data/medications.txt', 'rt') as f:
         result = process_medication_data(f)
 
-    assert result > 0
+    assert 'LISINOPRIL' in result
+
+def test_update_medications():
+    db = get_db()
+    data_file_name = '../data/medications.txt'
+
+    update_medications(db, data_file_name)
+
+    medications = db.execute_statement("SELECT * FROM medications_medication WHERE generic_name='LISINOPRIL'")
+
+    assert medications.first() is not None
