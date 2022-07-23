@@ -2,12 +2,12 @@ from django.db import models
 
 
 class Medication(models.Model):
-    generic_name = models.CharField(max_length=128,
+    generic_name = models.CharField(max_length=256,
                                     help_text='The generic name of the medication')
     brand_name = models.CharField(max_length=128,
                                   blank=True,
                                   help_text='The brand name of the medication')
-    strength_text = models.CharField(max_length=80) # full text with value and units, useful for concentrations
+    strength_text = models.CharField(max_length=256) # full text with value and units, useful for concentrations
     strength = models.FloatField(help_text='The strength per dosage unit', null=True, blank=True)
     strength_units = models.CharField(max_length=(20),
                                       help_text='The units of measure for the medication strength',

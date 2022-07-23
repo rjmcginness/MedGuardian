@@ -25,6 +25,7 @@ def get_db():
                      )
 
 def execute_statement(db, stmt: str, error_msg: str):
+    result = None
     try:
         result = db.execute_statement(stmt)
     except DBWrapperError as e:
