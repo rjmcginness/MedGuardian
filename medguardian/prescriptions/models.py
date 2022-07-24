@@ -27,6 +27,9 @@ class Prescriber(models.Model):
         constraints = [constraints.UniqueConstraint(fields=('federal_dea', 'address_id'),
                                                     name='prescriber_address_unique')]
 
+    def __str__(self) -> str:
+        return f'{self.last_name}, {self.first_name} {self.credentials} in {self.address.city}'
+
 class RouteOfAdministration(models.Model):
     name = models.CharField(max_length=80,
                             unique=True,
@@ -37,6 +40,9 @@ class RouteOfAdministration(models.Model):
                                    blank=True,
                                    null=True,
                                    help_text='Description of route of administration')
+
+    def __str__(self)-> str:
+        return f'{self.name}'
 
 
 class AdministrationFrequency(models.Model):
@@ -54,6 +60,9 @@ class AdministrationFrequency(models.Model):
     units = models.CharField(max_length=30,
                              help_text='Units for frequency: hour, day, etc')
 
+    def __str__(self) -> str:
+        return f'{self.name}'
+
 
 class AdministrationTime(models.Model):
     value = models.TimeField()
@@ -63,12 +72,24 @@ class AdministrationTime(models.Model):
 class Prescription(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     prescriber = models.ForeignKey(Prescriber, null=True, on_delete=models.SET_NULL)
+    medications = models.ManyToManyField('medications.Medication', through='PrescriptionMedication')
+    routes = models.ManyToManyField('RouteOfAdministration', through='PrescriptionRoute')
+    frequencies = models.ManyToManyField('AdministrationFrequency', through='PrescriptionFrequency')
     quantity_per_dose = models.FloatField(default=1,
                                           help_text='Quantity to be administered for each dose')
     dose_units = models.CharField(max_length=20,
                                   help_text='Units of quantity per dose')
+    is_prn = models.BooleanField(default=False,
+                                 help_text='Is this an "as needed" medication',
+                                 blank=True)
+    prn_reason = models.CharField(max_length=128,
+                                  help_text='Reason for "as needed" use',
+                                  null=True,
+                                  blank=True)
     instructions = models.TextField('SIG: how is the medication to be used')
-    quantity = models.FloatField(help_text='Amount of medication purchased or prescribed')
+    quantity = models.FloatField(help_text='Amount of medication purchased or prescribed',
+                                 null=True,
+                                 blank=True)
     duration_of_therapy = models.PositiveIntegerField(blank=True,
                                                       null=True,
                                                       help_text='How long to take this medication')
@@ -80,22 +101,15 @@ class Prescription(models.Model):
                                                null=True,
                                                help_text='Refills authorized')
     signature = models.BinaryField(help_text='Signature image', null=True, blank=True)
-    date_written = models.DateField(help_text='Date Written')
-    expiration_date = models.DateField(help_text='Expiration date')
-    is_prn = models.BooleanField(default=False,
-                                 help_text='Is this an "as needed" medication')
-    prn_reason = models.CharField(max_length=128,
-                                  help_text='Reason for "as needed" use')
+    date_written = models.DateField(help_text='Date Written', null=True, blank=True)
+    expiration_date = models.DateField(help_text='Expiration date', null=True, blank=True)
     is_active = models.BooleanField(default=True,
                                     help_text='Is this prescription still active')
-    routes = models.ManyToManyField('RouteOfAdministration', through='PrescriptionRoute')
-
-    #####################################################################################
-    ######SHOULD THIS BE A REFERENCE TO A MEDICATION PRODUCT DETAILS< WHICH REFERENCES MEDICATION???
-    medications = models.ManyToManyField('medications.Medication', through='PrescriptionMedication')
     administration_times = models.ManyToManyField('AdministrationTime', through='PrescriptionAdminTime')
-    frequencies = models.ManyToManyField('AdministrationFrequency', through='PrescriptionFrequency')
 
+    class Meta:
+        constraints = [constraints.UniqueConstraint(fields=['id', 'patient_id', 'prescriber_id'],
+                                                    name='rx_unique'),]
 
 class Administration(models.Model):
     quantity_administered = models.FloatField(help_text='Quantity administered')
@@ -161,35 +175,46 @@ class PrescriptionTransaction(models.Model):
 class PrescriptionRoute(models.Model):
     prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
     administration_route = models.ForeignKey(RouteOfAdministration, on_delete=models.CASCADE)
-    constraints.UniqueConstraint(fields=['prescription', 'administration_route'],
-                                 name='rx_route_unique')
+
+    class Meta:
+        constraints = [constraints.UniqueConstraint(fields=['prescription', 'administration_route'],
+                                                    name='rx_route_unique'),]
 
 
 class PrescriptionFrequency(models.Model):
     prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
     frequency = models.ForeignKey(AdministrationFrequency, on_delete=models.CASCADE)
-    constraints.UniqueConstraint(fields=['prescription', 'frequency'],
-                                 name='rx_frequency_unique')
+
+    class Meta:
+        constraints = [constraints.UniqueConstraint(fields=['prescription', 'frequency'],
+                                                    name='rx_frequency_unique'),]
 
 
 class PharmacyPharmacist(models.Model):
     pharmacy = models.ForeignKey(Pharmacy, on_delete=models.CASCADE)
     pharmacist = models.ForeignKey(Pharmacist, on_delete=models.CASCADE)
-    constraints.UniqueConstraint(fields=['pharmacy', 'pharmacist'],
-                                 name='pharmacist_pharmacy_unique')
+
+    classMeta:\
+        constraints = [constraints.UniqueConstraint(fields=['pharmacy', 'pharmacist'],
+                                                    name='pharmacist_pharmacy_unique'),]
 
 
 class PrescriptionAdminTime(models.Model):
     ######does this cascade to the RX??????
     prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
     administration_time = models.ForeignKey(AdministrationTime, on_delete=models.CASCADE)
-    constraints.UniqueConstraint(fields=['prescription', 'administration_time'],
-                                 name='rx_admin_time_unique')
+
+    class Meta:
+        constraints = [constraints.UniqueConstraint(fields=['prescription', 'administration_time'],
+                                                    name='rx_admin_time_unique'),]
 
 
 class PrescriptionMedication(models.Model):
     prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
     medication = models.ForeignKey(Medication, on_delete=models.CASCADE)
+
+    constraints = [constraints.UniqueConstraint(fields=['prescription_id', 'medication_id'],
+                                                name='rx_med_unique')]
 
 
 class PharmacistTransaction(models.Model):

@@ -45,8 +45,9 @@ class PrescriberCreateView(MedGuardianViewMixin):
         form.save()
         context = {
             'pk': self.request.user.id,
-            'prescriber_id': self.kwargs.get('prescriber_id')
+            'prescriber_id': self.kwargs['prescriber_id']
         }
+
         return render(self.request, reverse('prescriber_add_success'), context)
 
 
@@ -153,9 +154,10 @@ class PrescriptionCreateView(MedGuardianViewMixin):
         return self.render_to_response(context)
 
     def form_valid(self, form):
-        form.set_patient_id(self.request.user.id)
+        # form.set_patient_id(self.request.user.id)
         form.save()
 
+        ####### MAY WANT TO CHANGE THIS
         return super().form_valid(form)
 
 

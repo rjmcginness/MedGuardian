@@ -17,6 +17,9 @@ class Medication(models.Model):
                                    default='tablet',
                                    help_text='The dosage form of the medication')
 
+    def __str__(self) -> str:
+        return f'{self.generic_name} ({self.brand_name}) {self.strength_text} {self.dosage_form}'
+
 class MedicationProductDetails(models.Model):
     ndc = models.CharField(max_length=11,
                            help_text='The National Drug Code for a medication')
