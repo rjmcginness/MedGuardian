@@ -66,6 +66,7 @@ class PrescriptionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Prescription
         fields = [
+                    'id',
                     'date_written',
                     'patient',
                     'prescriber',

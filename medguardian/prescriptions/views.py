@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import reverse
 from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404
 from django.views.generic import FormView
 from django.views.generic import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -21,6 +22,7 @@ from .models import PatientPrescribers
 from .models import Prescription
 from .serializers import PrescriberSerializer
 from .serializers import PrescriptionSerializer
+from .serializers import AdministrationTimeSerializer
 
 
 class MedGuardianViewMixin(LoginRequiredMixin, UserPassesTestMixin, FormView):
@@ -199,7 +201,7 @@ class PrescriptionRDView(LoginRequiredMixin, UserPassesTestMixin, generics.Retri
         try:
             return Prescription.objects.get(id=pk)
         except Prescription.DoesNotExist:
-            return HTTP404
+            raise Http404()
 
     def get(self, request, *args, **kwargs):
         prescription = self.get_object(kwargs.get('rx_id', None))
@@ -221,11 +223,30 @@ class PrescriptionRDView(LoginRequiredMixin, UserPassesTestMixin, generics.Retri
         return redirect(to=reverse('prescriptions', kwargs=context))
 
 
-class AdministrationTimeCreateView(LoginRequiredMixin, UserPassesTestMixin, generics.CreateAPIView):
+class AdministrationTimeListView(LoginRequiredMixin, UserPassesTestMixin, generics.ListAPIView):
+    serializer_class = PrescriptionSerializer
+    renderer_classes = [TemplateHTMLRenderer,]
+    permission_classes = [permissions.IsAuthenticated,]
+
+    def get_queryset(self):
+        return get_object_or_404(klass=Prescription, id=self.kwargs.get('rx_id'))
+
+    def list(self, request, *args, **kwargs):
+        prescription = self.get_queryset()
+        serializer = self.get_serializer(prescription)
+
+        return Response({'prescription': serializer.data},
+                        template_name='administration-times.html')
+
+    def test_func(self)-> bool:
+        return self.request.user.id == self.kwargs['pk']
+
+
+class PrescriptionUpdateAPIView(LoginRequiredMixin, UserPassesTestMixin, generics.UpdateAPIView):
     
 
     def test_func(self)-> bool:
         return self.request.user.id == self.kwargs['pk']
 
-    def post(self, request, *args, **kwargs):
+    # def post(self, request, *args, **kwargs):
 

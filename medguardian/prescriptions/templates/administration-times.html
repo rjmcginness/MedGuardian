@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table>
+        <tr>
+            <td>
+                {% for medication in prescription.medications %}
+                {{ medication.generic_name }}<span>  </span>
+                {% endfor %}
+            </td>
+            <td>{{ medication.strength_text }}</td>
+            <td>{{ medication.dosage_form }}</td>
+        </tr>
+        <tr>
+            <td>
+                {% for route in prescription.routes %}
+                {{ route.name }}
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {% for frequency in prescription.frequencies %}
+                {{ frequency.name }}
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <form method="PATCH" action="{% url 'edit_admin_times' pk=request.user.id rx_id=prescription.id %}">
+                    {% csrf_token %}
+                    <input type="submit" value="Edit Times"/>
+                </form>
+            </td>
+        </tr>
+    </table>
+    <table>
+        <thead>
+            <tr>
+                <th>Administration Times</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for time in prescription.admin_times %}
+            <tr>
+                <td>{{ time.value }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -32,6 +32,8 @@ from prescriptions.views import PrescriptionCreateView
 from prescriptions.views import PrescribersListView
 from prescriptions.views import PrescriberAddSuccessView
 from prescriptions.views import PrescriptionRDView
+from prescriptions.views import AdministrationTimeListView
+from prescriptions.views import PrescriptionUpdateAPIView
 
 
 
@@ -63,11 +65,19 @@ urlpatterns = [
     path('accounts/<int:pk>/profile/', ProfileView.as_view(), name='account_profile'),
     path('accounts/<int:pk>/prescriptions/new', PrescriptionCreateView.as_view(), name='new_rx'),
     path('accounts/<int:pk>/prescriptions/<int:rx_id>', PrescriptionRDView.as_view(), name='prescription'),
+    path('account/<int:pk>/prescriptions/<int:rx_id>/administration_times',
+         AdministrationTimeListView.as_view(),
+         name='admin_times'),
     path('accounts/<int:pk>/prescribers/new', PrescriberCreateView.as_view(), name='new_prescriber'),
     path('accounts/<int:pk>/prescribers/select', PrescriberSelectView.as_view(), name='select_prescriber'),
     path('accounts/<int:pk>/prescribers', PrescribersListView.as_view(), name='prescribers'),
-    path('account/<int:pk>/prescriber/<int:prescriber_id>/added', PrescriberAddSuccessView.as_view(), name='prescriber_add_success'),
+    path('account/<int:pk>/prescriber/<int:prescriber_id>/added',
+         PrescriberAddSuccessView.as_view(),
+         name='prescriber_add_success'),
     path('accounts/<int:pk>/medications', medications.views.ActiveMedProfileViewSet.as_view(), name='medications'),
+    path('accounts/<int:pk>/prescriptions/<int:rx_id>/edit_admin_times',
+         PrescriptionUpdateAPIView.as_view(),
+         name='edit_admin_times'),
     path('medication-search/', medications.views.medication_search),
     path('medications/create', medications.views.medication_create),
     path('accounts/',

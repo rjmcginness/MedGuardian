@@ -6,8 +6,6 @@
         <thead>
             <tr>
                 <th>Medication</th>
-                <th>Brand Name</th>
-                <th>Medication Strength</th>
                 <th>Route of Administration</th>
                 <th>Frequency</th>
                 <th>Prescriber</th>
@@ -20,7 +18,7 @@
         {% for prescription in prescriptions %}
             <tr>
                 <td>
-                    <a href="{% url 'medication' pk=request.user.id med_id=medication.id %}">
+                    <a href="{% url 'prescription' pk=request.user.id rx_id=prescription.id %}">
                     {% for medication in prescription.medications %}
                     {{ medication.generic_name }} ({{ medication.brand_name }}) {{ medication.strength_text }} {{ medication.dosage_form }}<br/>
                     {% endfor %}
