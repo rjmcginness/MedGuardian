@@ -5,8 +5,7 @@
     <table>
         <thead>
             <tr>
-                <th>Date Written</th>
-                <th>Generic Name</th>
+                <th>Medication</th>
                 <th>Brand Name</th>
                 <th>Medication Strength</th>
                 <th>Route of Administration</th>
@@ -21,13 +20,31 @@
         {% for prescription in prescriptions %}
             <tr>
                 <td>
-                    {% for medication in prescriptions.medications %}
-                    {{ medication.generic_name }} ({{ medication.brand_name }}) {{ medication.strength }}
+                    <a href="{% url 'medication' pk=request.user.id med_id=medication.id %}">
+                    {% for medication in prescription.medications %}
+                    {{ medication.generic_name }} ({{ medication.brand_name }}) {{ medication.strength_text }} {{ medication.dosage_form }}<br/>
+                    {% endfor %}
+                    </a>
+                </td>
+                <td>
+                    {% for route in prescription.routes %}
+                    {{ route.name }}<br/>
                     {% endfor %}
                 </td>
-                <td>{{ medication.brand_name }}</td>
-                <td>{{ medication.strength }} {{ medication.strength_units }}</td>
-                <td></td>
+                <td>
+                    {%  for frequency in prescription.frequencies %}
+                    {{ frequency.name }}<br/>
+                    {% endfor %}
+                </td>
+                <td>{{ prescription.prescriber.last_name }}, {{ prescription.prescriber.first_name }} {{ prescription.prescriber.credentials }}</td>
+                <td>
+                    {% for time in prescription.administration_times %}
+                    {{ time.value }}<br/>
+                    {% endfor %}
+                </td>
+                <td>
+                    <a href="{% url 'admin_times' pk=request.user.id rx_id=prescription.id %}">Edit Times</a>
+                </td>
             </tr>
         {% endfor %}
         </tbody>

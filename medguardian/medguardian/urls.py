@@ -31,6 +31,7 @@ from prescriptions.views import PrescriberSelectView
 from prescriptions.views import PrescriptionCreateView
 from prescriptions.views import PrescribersListView
 from prescriptions.views import PrescriberAddSuccessView
+from prescriptions.views import PrescriptionRDView
 
 
 
@@ -53,9 +54,6 @@ router.register('medication-products',
 
 urlpatterns = [
     path('', FrontPageView.as_view()),
-    # path('', include(router.urls, namespac'medications')),
-    # path('accounts/<int:pk>/', include(router.urls)),
-    path('accounts/<int:pk>/medications', medications.views.ActiveMedProfileViewSet.as_view(), name='medications'),
     path('register/', RegistrationView.as_view(), name='register'),
     path('account_created',
          RegistrationSuccessView.as_view(),
@@ -64,18 +62,14 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
     path('accounts/<int:pk>/profile/', ProfileView.as_view(), name='account_profile'),
     path('accounts/<int:pk>/prescriptions/new', PrescriptionCreateView.as_view(), name='new_rx'),
+    path('accounts/<int:pk>/prescriptions/<int:rx_id>', PrescriptionRDView.as_view(), name='prescription'),
     path('accounts/<int:pk>/prescribers/new', PrescriberCreateView.as_view(), name='new_prescriber'),
     path('accounts/<int:pk>/prescribers/select', PrescriberSelectView.as_view(), name='select_prescriber'),
     path('accounts/<int:pk>/prescribers', PrescribersListView.as_view(), name='prescribers'),
     path('account/<int:pk>/prescriber/<int:prescriber_id>/added', PrescriberAddSuccessView.as_view(), name='prescriber_add_success'),
-    # path('accounts/<int:pk>/prescribers/<int:prescriber_id>',
-    #      PrescriberView.as_view(),
-    #      name='prescriber'),
-    # path('accounts/<int:pk>/prescribers/success', PrescriberAddSuccessView.as_view(), name='prescriber_add_success'),
-    # path('accounts/<int:pk>/medications', medications.views.MedicationListView, name='medications'),
+    path('accounts/<int:pk>/medications', medications.views.ActiveMedProfileViewSet.as_view(), name='medications'),
     path('medication-search/', medications.views.medication_search),
     path('medications/create', medications.views.medication_create),
-
     path('accounts/',
          include(('django.contrib.auth.urls', 'auth'), namespace='accounts')
          ),

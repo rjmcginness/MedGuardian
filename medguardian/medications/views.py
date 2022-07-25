@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
-from rest_framework import routers
 from rest_framework import generics
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework import permissions
+import json
 
 from .models import MedicationProductDetails
 from .models import Medication
@@ -14,6 +14,7 @@ from .serializers import MedicationProductDetailsSerializer
 from .serializers import MedicationSerializer
 from .forms import MedicationCreateForm
 from prescriptions.models import Prescription
+from prescriptions.serializers import PrescriptionSerializer
 
 
 def index(request):
@@ -48,39 +49,33 @@ def medication_create(request):
 #                            initkwargs={'suffix':'List'}),]
 
 class ActiveMedProfileViewSet(LoginRequiredMixin, generics.ListAPIView):
-    serializer_class = MedicationSerializer
-    renderer_classes = [TemplateHTMLRenderer]
+    serializer_class = PrescriptionSerializer
+    renderer_classes = [TemplateHTMLRenderer,]
     permission_classes = [permissions.IsAuthenticated,]
 
     def list(self, request, *args, **kwargs):
         rx_list = Prescription.objects.filter(
                     patient_id=request.user.id, is_active=True)
-        # queryset = [rx.medication_set for rx in rx_list]
-        serializer = self.serializer_class(rx_list, many=True)
+
+        serializer = self.get_serializer(rx_list, many=True)
         return Response({'prescriptions': serializer.data},
                         template_name='active-medications.html')
 
-# class ActiveMedProfileViewSet(LoginRequiredMixin, viewsets.ViewSet):
-#     serializer_class = MedicationSerializer
-#     # queryset = Medication
-#     renderer_classes = [TemplateHTMLRenderer]
-#     permission_classes = [permissions.IsAuthenticated,]
-#
-#     def list(self, request, *args, **kwargs):
-#         rx_list = Prescription.objects.filter(
-#                     patient_id=request.user.id, is_active=True)
-#         queryset = [rx.medication_set for rx in rx_list]
-#         serializer = self.serializer_class(queryset, many=True)
-#         return Response({'medications': serializer.data},
-#                         template_name='active-medications.html')
 
 class MedicationProductDetailsViewSet(viewsets.ModelViewSet):
     serializer_class = MedicationProductDetailsSerializer
     queryset = MedicationProductDetails.objects.all()
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
 
-class MedicationViewSet(viewsets.ModelViewSet):
-    serializer_class = MedicationSerializer
-    queryset = Medication.objects.all()
-    # permission_classes = [permissions.IsAuthenticated]
+# class MedicationViewSet(generics.RetrieveDestroyAPIView):
+#     serializer_class = MedicationSerializer
+#     # queryset = Medication.objects.all()
+#     permission_classes = [permissions.IsAuthenticated]
+#
+#     def get_object(self, pk):
+#         try:
+#             return Medication.
+#
+#
+#     def get(self, request, *args, **kwargs):

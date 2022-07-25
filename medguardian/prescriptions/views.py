@@ -5,6 +5,7 @@ from django.views.generic import FormView
 from django.views.generic import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.http import Http404
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.renderers import TemplateHTMLRenderer
@@ -185,3 +186,46 @@ class ActiveMedProfileViewSet(LoginRequiredMixin, UserPassesTestMixin, generics.
         serializer = self.serializer_class(rx_list, many=True)
         return Response({'prescriptions': serializer.data},
                         template_name='active-medications.html')
+
+
+class PrescriptionRDView(LoginRequiredMixin, UserPassesTestMixin, generics.RetrieveDestroyAPIView):
+    serializer_class = PrescriptionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def test_func(self) -> bool:
+        return self.request.user.id == self.kwargs['pk']
+
+    def get_object(self, pk):
+        try:
+            return Prescription.objects.get(id=pk)
+        except Prescription.DoesNotExist:
+            return HTTP404
+
+    def get(self, request, *args, **kwargs):
+        prescription = self.get_object(kwargs.get('rx_id', None))
+
+        serializer = self.get_serializer(prescription)
+
+        return Response({'prescription': serializer.data},
+                        template_name='prescription.html')
+
+    def delete(self, request, *args, **kwargs):
+        prescription = self.get_object(kwargs.get('rx_id', None))
+
+        prescription.delete()
+
+        context = {
+            'pk': request.user.id
+        }
+
+        return redirect(to=reverse('prescriptions', kwargs=context))
+
+
+class AdministrationTimeCreateView(LoginRequiredMixin, UserPassesTestMixin, generics.CreateAPIView):
+    
+
+    def test_func(self)-> bool:
+        return self.request.user.id == self.kwargs['pk']
+
+    def post(self, request, *args, **kwargs):
+

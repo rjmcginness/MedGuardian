@@ -30,7 +30,7 @@ class RouteOfAdministrationSerializer(serializers.HyperlinkedModelSerializer):
         model = RouteOfAdministration
         fields = [
                     'name',
-                    'abbeviation',
+                    'abbreviation',
                     'description'
                  ]
 
@@ -59,8 +59,8 @@ class PrescriptionSerializer(serializers.HyperlinkedModelSerializer):
     medications = MedicationSerializer(many=True)
     patient = PatientSerializer()
     prescriber = PrescriberSerializer()
-    route_of_administration = RouteOfAdministrationSerializer(many=True)
-    frequency = AdministrationFrequencySerializer(many=True)
+    routes = RouteOfAdministrationSerializer(many=True)
+    frequencies = AdministrationFrequencySerializer(many=True)
     administration_times = AdministrationTimeSerializer(many=True)
 
     class Meta:
@@ -68,10 +68,10 @@ class PrescriptionSerializer(serializers.HyperlinkedModelSerializer):
         fields = [
                     'date_written',
                     'patient',
-                    'prescriber'
+                    'prescriber',
                     'medications',
-                    'route_of_administration',
-                    'frequency',
+                    'routes',
+                    'frequencies',
                     'administration_times',
                     'quantity_per_dose',
                     'dose_units',
