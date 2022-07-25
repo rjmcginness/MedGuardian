@@ -10,6 +10,7 @@ class MedicationSerializer(serializers.HyperlinkedModelSerializer):
                   'brand_name',
                   'strength',
                   'strength_units',
+                  'strength_text',
                   'dosage_form']
 
 

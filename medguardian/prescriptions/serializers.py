@@ -56,12 +56,12 @@ class AdministrationTimeSerializer(serializers.HyperlinkedModelSerializer):
                  ]
 
 class PrescriptionSerializer(serializers.HyperlinkedModelSerializer):
-    medications = MedicationSerializer()
+    medications = MedicationSerializer(many=True)
     patient = PatientSerializer()
     prescriber = PrescriberSerializer()
-    route_of_administration = RouteOfAdministrationSerializer()
-    frequency = AdministrationFrequencySerializer()
-    administration_times = AdministrationTimeSerializer()
+    route_of_administration = RouteOfAdministrationSerializer(many=True)
+    frequency = AdministrationFrequencySerializer(many=True)
+    administration_times = AdministrationTimeSerializer(many=True)
 
     class Meta:
         model = Prescription

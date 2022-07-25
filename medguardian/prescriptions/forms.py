@@ -160,6 +160,7 @@ class PrescriptionCreateForm(forms.ModelForm):
         patient = Patient.objects.get(id=self.__patient_id)
 
         # create new prescription record
+        print('>>>>>>>>>>>HERE')
         prescription = Prescription.objects.create(patient=patient,
                                                    prescriber=prescriber,
                                                    instructions=data['instructions'],
@@ -170,13 +171,13 @@ class PrescriptionCreateForm(forms.ModelForm):
                                                   )
 
         # create new prescription/medication association
-        PrescriptionMedication.objects.create(prescription=prescription, medication=medication)
+        prescription.medications.add(medication)
 
         # create new prescription/route association
-        PrescriptionRoute.objects.create(prescription=prescription, administration_route=route)
+        prescription.routes.add(route)
 
         # create new prescription/frequency association
-        PrescriptionFrequency.objects.create(prescription=prescription, frequency=frequency)
+        prescription.frequencies.add(frequency)
 
         return prescription
 
