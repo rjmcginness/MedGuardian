@@ -7,10 +7,13 @@ from django.views.generic import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import Http404
+from django.http import HttpResponse
+from http import HTTPStatus
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework import permissions
+import json
 
 from .forms import PrescriberSelectForm
 from .forms import PrescriptionCreateForm
@@ -21,6 +24,8 @@ from .forms import PrescriptionEditForm
 from .models import Prescriber
 from .models import PatientPrescribers
 from .models import Prescription
+from .models import PrescriptionAdminTime
+from .models import AdministrationTime
 from .serializers import PrescriberSerializer
 from .serializers import PrescriptionSerializer
 from .serializers import AdministrationTimeSerializer
@@ -262,11 +267,36 @@ class PrescriptionUpdateAPIView(LoginRequiredMixin, UserPassesTestMixin, generic
         return None
 
     def get_object(self):
-        print('<<<<<<<<<', self.kwargs.get('rx_id'))
 
         return Prescription.objects.get(id=self.kwargs.get('rx_id'))
 
+    def get_serializer(self):
+        return None
+
     def patch(self, request, *args, **kwargs):
-        print('>>>>>>>', request, kwargs.get('data'))
-        return self.update(request, *args, **kwargs)
+        admin_times = json.loads(self.request.body).get('administration_times', None)
+
+        # if there are new admin times, delete old associations and create new ones
+        if admin_times:
+            # get a list of current administration time ids (if any)
+            current_admin_time_ids = self.get_object().administration_times.values_list('id')
+            current_admin_time_ids = [time_tup[0] for time_tup in current_admin_time_ids]
+
+            # delete associations with old ids
+            PrescriptionAdminTime.objects.filter(administration_time_id__in=current_admin_time_ids,
+                                                 prescription_id=kwargs.get('rx_id')).delete()
+
+            # get ids for new administration times
+            admin_time_ids = AdministrationTime.objects.filter(value__in=admin_times).values_list('id')
+            admin_time_ids = [time_tup[0] for time_tup in admin_time_ids]
+
+            # create list on new association models objects
+            new_rx_time_associations = [PrescriptionAdminTime(prescription_id=self.kwargs.get('rx_id'),
+                                                              administration_time_id=time_id) for \
+                                                              time_id in admin_time_ids]
+
+            # create (in bulk) new associations
+            PrescriptionAdminTime.objects.bulk_create(new_rx_time_associations)
+
+        return HttpResponse(status=HTTPStatus.ACCEPTED)
 
