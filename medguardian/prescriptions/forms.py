@@ -12,8 +12,7 @@ from src.user_model import ContactInformation
 from src.user_model import Patient
 from src.utils import states_tuple
 from medications.models import Medication
-
-
+from prescriptions.models import AdministrationTime
 
 
 class PrescriberCreateForm(forms.ModelForm):
@@ -89,26 +88,12 @@ class PrescriberSelectForm(forms.Form):
     state = forms.ChoiceField(choices=states_tuple(),
                               help_text="State where your doctor practices")
 
-class PrescriptionCreateForm(forms.ModelForm):
-
-    # prescriber_name = forms.ChoiceField
-
-    class Meta:
-        model = Prescription
-        exclude = ('id', 'patient_id', 'prescriber_id', 'is_active')
-
-    # def save(self, commit=True):
-
 
 class PatientPrescriberForm(forms.Form):
     patient_id = forms.IntegerField(widget=forms.HiddenInput())
     prescriber_id = forms.IntegerField(widget=forms.HiddenInput())
 
 class PrescriptionCreateForm(forms.ModelForm):
-    # prescriber = forms.ChoiceField(choices=[])
-    # route_of_admin = forms.ChoiceField(choices=[])
-    # frequency = forms.ChoiceField(choices=[])
-    # medication = forms.ChoiceField(choices=[])
 
     class Meta:
         model = Prescription
@@ -160,7 +145,6 @@ class PrescriptionCreateForm(forms.ModelForm):
         patient = Patient.objects.get(id=self.__patient_id)
 
         # create new prescription record
-        print('>>>>>>>>>>>HERE')
         prescription = Prescription.objects.create(patient=patient,
                                                    prescriber=prescriber,
                                                    instructions=data['instructions'],
@@ -182,5 +166,13 @@ class PrescriptionCreateForm(forms.ModelForm):
         return prescription
 
 
+class AdministrationTimeMulipleChoiceField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return obj.value
 
+class PrescriptionEditForm(forms.Form):
+    administration_times = AdministrationTimeMulipleChoiceField(queryset=AdministrationTime.objects.all(),
+                                                                      to_field_name='value',
+                                                                      label='Administration Times',
+                                                                      help_text='Hold ctrl or cmnd and click multiple times to select')
 

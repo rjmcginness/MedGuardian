@@ -27,8 +27,7 @@
         </tr>
         <tr>
             <td>
-                <form method="PATCH" action="{% url 'edit_admin_times' pk=request.user.id rx_id=prescription.id %}">
-                    {% csrf_token %}
+                <form method="" action="{% url 'edit_admin_times' pk=request.user.id rx_id=prescription.id %}">
                     <input type="submit" value="Edit Times"/>
                 </form>
             </td>
@@ -48,4 +47,5 @@
             {% endfor %}
         </tbody>
     </table>
+
 {% endblock %}

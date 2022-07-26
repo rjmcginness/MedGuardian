@@ -75,7 +75,7 @@ urlpatterns = [
          PrescriberAddSuccessView.as_view(),
          name='prescriber_add_success'),
     path('accounts/<int:pk>/medications', medications.views.ActiveMedProfileViewSet.as_view(), name='medications'),
-    path('accounts/<int:pk>/prescriptions/<int:rx_id>/edit_admin_times',
+    path('accounts/<int:pk>/prescriptions/<int:rx_id>/administration_times/edit',
          PrescriptionUpdateAPIView.as_view(),
          name='edit_admin_times'),
     path('medication-search/', medications.views.medication_search),

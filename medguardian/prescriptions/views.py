@@ -16,6 +16,7 @@ from .forms import PrescriberSelectForm
 from .forms import PrescriptionCreateForm
 from .forms import PatientPrescriberForm
 from .forms import PrescriberCreateForm
+from .forms import PrescriptionEditForm
 
 from .models import Prescriber
 from .models import PatientPrescribers
@@ -242,11 +243,30 @@ class AdministrationTimeListView(LoginRequiredMixin, UserPassesTestMixin, generi
         return self.request.user.id == self.kwargs['pk']
 
 
-class PrescriptionUpdateAPIView(LoginRequiredMixin, UserPassesTestMixin, generics.UpdateAPIView):
-    
+class PrescriptionUpdateAPIView(LoginRequiredMixin, UserPassesTestMixin, generics.mixins.UpdateModelMixin, FormView):
+    permission_classes = [permissions.IsAuthenticated,]
+    form_class = PrescriptionEditForm
+    template_name = 'administration-times-edit.html'
+
+    def get(self, request, *args, **kwargs):
+
+        context = self.get_context_data(**kwargs)
+        context.update({'rx_id': kwargs.get('rx_id')})
+
+        return render(request, template_name=self.template_name, context=context)
 
     def test_func(self)-> bool:
         return self.request.user.id == self.kwargs['pk']
 
-    # def post(self, request, *args, **kwargs):
+    def form_valid(self, form):
+        return None
+
+    def get_object(self):
+        print('<<<<<<<<<', self.kwargs.get('rx_id'))
+
+        return Prescription.objects.get(id=self.kwargs.get('rx_id'))
+
+    def patch(self, request, *args, **kwargs):
+        print('>>>>>>>', request, kwargs.get('data'))
+        return self.update(request, *args, **kwargs)
 

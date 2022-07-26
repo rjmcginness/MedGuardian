@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>MAKE SURE NOT TO ADD MORE ADMINISTRATION TIMES THAN NEEDED</h2>
+    <form method="PATCH" action="">
+        {{ form.as_p }}
+        <input type="submit" value="Save"/>
+    </form>
+    <script>
+        $(document).ready(function () {
+            $('form').submit(function (e) {
+                let url = "{% url 'edit_admin_times' pk=request.user.id rx_id=rx_id %}";
+                console.log($('form').serialize())
+                $.ajax({
+                    type: "PATCH",
+                    url: url,
+                    data: $('form').serialize(),
+                    success: function (data) {
+                        window.location.href = "{% url 'admin_times' pk=request.user.id rx_id=rx_id %}";
+                    },
+                    error: function (data) {
+                        window.location.href = "{% url 'admin_times' pk=request.user.id rx_id=rx_id %}";
+                    }
+                });
+                e.preventDefault();
+            });
+
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!/^GET|HEAD|OPTIONS|TRACE$/i.test(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'))
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
