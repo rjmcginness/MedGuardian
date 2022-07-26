@@ -13,6 +13,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework import permissions
+from typing import List
 import json
 
 from .forms import PrescriberSelectForm
@@ -28,7 +29,6 @@ from .models import PrescriptionAdminTime
 from .models import AdministrationTime
 from .serializers import PrescriberSerializer
 from .serializers import PrescriptionSerializer
-from .serializers import AdministrationTimeSerializer
 
 
 class MedGuardianViewMixin(LoginRequiredMixin, UserPassesTestMixin, FormView):
@@ -298,5 +298,9 @@ class PrescriptionUpdateAPIView(LoginRequiredMixin, UserPassesTestMixin, generic
             # create (in bulk) new associations
             PrescriptionAdminTime.objects.bulk_create(new_rx_time_associations)
 
+            ###########NEED TO DELETE OLD ASSOCIATED CONTACT TIMES AND MAKE NEW ASSOCIATIONS
+
         return HttpResponse(status=HTTPStatus.ACCEPTED)
+
+    def resolve_contact_times(self, patient_id: int, rx: Prescription, old_time_ids: List[int], new_time_ids: List[int]):
 
