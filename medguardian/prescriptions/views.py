@@ -355,4 +355,17 @@ class PrescriptionUpdateAPIView(LoginRequiredMixin, UserPassesTestMixin, generic
         ContactTimes.objects.bulk_create(new_contact_times)
 
 
+class TodaysMedicationsListView(LoginRequiredMixin, UserPassesTestMixin, generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated,]
+    renderer_classes = [TemplateHTMLRenderer,]
+    serializer_class = PrescriptionSerializer
+    template_name = 'prescriptions-today.html'
 
+    def test_func(self)-> bool:
+        return self.request.user.id == self.kwargs['pk']
+
+    def get_queryset(self):
+        return Prescription.objects.filter(patient_id=self.request.user.id, is_active=True)
+
+    def list(self, request, *args, **kwargs):
+        raise Http404
