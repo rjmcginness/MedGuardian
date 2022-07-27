@@ -231,10 +231,11 @@ class PatientPrescribers(models.Model):
 
 
 class ContactTimes(models.Model):
-    contact_id = models.ForeignKey(src.user_model.ContactInformation,
+    contact = models.ForeignKey(src.user_model.ContactInformation,
                                    on_delete=models.CASCADE)
-    administration_time_id = models.ForeignKey(AdministrationTime,
+    administration_time = models.ForeignKey(AdministrationTime,
                                                on_delete=models.CASCADE)
+    instances = models.PositiveIntegerField(default=1, blank=True)
 
     class Meta:
         constraints = [constraints.UniqueConstraint(fields=['contact_id', 'administration_time_id'],
