@@ -4,9 +4,13 @@
 
 from decouple import config
 
-from .db_connect import DBWrapper
-from .db_connect import make_db_url
-from .db_connect import DBWrapperError
+# from .db_connect import DBWrapper
+# from .db_connect import make_db_url
+# from .db_connect import DBWrapperError
+
+from db_connect import DBWrapper
+from db_connect import make_db_url
+from db_connect import DBWrapperError
 
 def get_db():
     db_name = config('DB_NAME')
