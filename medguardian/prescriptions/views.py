@@ -6,13 +6,17 @@ from django.views.generic import FormView
 from django.views.generic import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
 from django.http import Http404
 from django.http import HttpResponse
+from django.http import FileResponse
 from http import HTTPStatus
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework import permissions
+from reportlab.pdfgen import canvas
 from typing import List
 import json
 
@@ -359,7 +363,6 @@ class TodaysMedicationsListView(LoginRequiredMixin, UserPassesTestMixin, generic
     permission_classes = [permissions.IsAuthenticated,]
     renderer_classes = [TemplateHTMLRenderer,]
     serializer_class = PrescriptionSerializer
-    template_name = 'prescriptions-today.html'
 
     def test_func(self)-> bool:
         return self.request.user.id == self.kwargs['pk']
@@ -368,4 +371,18 @@ class TodaysMedicationsListView(LoginRequiredMixin, UserPassesTestMixin, generic
         return Prescription.objects.filter(patient_id=self.request.user.id, is_active=True)
 
     def list(self, request, *args, **kwargs):
-        raise Http404
+        prescriptions = self.get_queryset()
+        serializer = self.serializer_class(prescriptions, many=True)
+
+        return Response({'prescriptions': serializer.data},
+                        template_name='prescriptions-today.html')
+
+def verify_user(request):
+    return request.user.id == request.session.get('pk')
+
+@login_required()
+@user_passes_test(test_func=verify_user)
+def download_todays_meds(request) -> HttpResponse:
+
+
+    return HttpResponse("Hello", content_type='application/pdf,text/plain')

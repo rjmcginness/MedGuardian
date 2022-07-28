@@ -1,2 +1,63 @@
 {% extends "base.html" %}
- HELLO
+
+{% block content %}
+    <h3>Today's Medications</h3>
+    <form id="download" method="GET" action=""><input type="submit" value="Download"/></form>
+    <table class="table table-hover table-success table-striped">
+        <thead>
+            <tr>
+                <th>Medication</th>
+                <th>Dose</th>
+                <th>Form</th>
+                <th>How to Take it</th>
+                <th>Administration Times</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prescription in prescriptions %}
+            <tr>
+                {% for medication in prescription.medications %}
+                <td>{{ medication.generic_name }} ({{ medication.brand_name }}) {{ medication.strength_text }}</td>
+                <td>{{ prescription.quantity_per_dose }}</td>
+                <td>{{ medication.dosage_form }}</td>
+                <td>
+                    {% for route in prescription.routes %}
+                    {{ route.name }}<br/>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for admin_time in prescription.administration_times %}
+                    {{ admin_time.value }}<br/>
+                    {% endfor %}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <script>
+        $(document).ready(function () {
+            $('#download').on("submit", function(e) {
+                e.preventDefault();
+                let url = {% url 'todays_meds_download' pk=request.user.id %}
+                $.ajax(url, {
+                    type: "GET",
+                    accepts: "application/pdf",
+                    success: function(data) {
+
+                    },
+                    error: function(data) {
+
+                    }
+                });
+            });
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!/^GET|HEAD|OPTIONS|TRACE$/i.test(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'))
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

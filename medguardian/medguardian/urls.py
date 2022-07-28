@@ -35,6 +35,7 @@ from prescriptions.views import PrescriptionRDView
 from prescriptions.views import AdministrationTimeListView
 from prescriptions.views import PrescriptionUpdateAPIView
 from prescriptions.views import TodaysMedicationsListView
+from prescriptions.views import download_todays_meds
 
 
 
@@ -77,13 +78,12 @@ urlpatterns = [
          name='prescriber_add_success'),
     path('accounts/<int:pk>/medications', medications.views.ActiveMedProfileViewSet.as_view(), name='medications'),
     path('accounts/<int:pk>/prescriptions/today', TodaysMedicationsListView.as_view(), name='todays_meds'),
+    # path('accounts/<int:pk>/prescriptions/today/download', download_todays_meds, name='todays_meds_download'),
     path('accounts/<int:pk>/prescriptions/<int:rx_id>/administration_times/edit',
          PrescriptionUpdateAPIView.as_view(),
          name='edit_admin_times'),
     path('medication-search/', medications.views.medication_search),
     path('medications/create', medications.views.medication_create),
-    path('accounts/',
-         include(('django.contrib.auth.urls', 'auth'), namespace='accounts')
-         ),
+    path('accounts/', include(('django.contrib.auth.urls', 'auth'), namespace='accounts')),
     path('admin/', admin.site.urls),
 ]
