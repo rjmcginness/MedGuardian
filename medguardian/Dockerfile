@@ -13,8 +13,14 @@ ENV PYTHONUNBUFFERED=1
 COPY requirements.txt .
 RUN python -m pip install -r requirements.txt
 
-WORKDIR /app
-COPY . /app
+
+ENV HOME=/home/medguardian
+ENV APP_HOME=/home/medguardian/web
+RUN mkdir -p $APP_HOME
+RUN mkdir $APP_HOME/staticfiles
+WORKDIR $APP_HOME
+
+COPY . $APP_HOME
 
 
 

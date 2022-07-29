@@ -4,8 +4,11 @@ services:
     command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
       - ./medguardian:/usr/src/medguardian/
-    ports:
-      - 8000:8000
+      - static_volume:/home/medguardian/web/staticfiles
+    # ports:
+    #   - 8000:8000
+    expose:
+      - 8000
     environment:
       - DB_NAME=medguardian_db
       - DB_USER=postgres
@@ -15,7 +18,7 @@ services:
       - DATABASE=postgres
     depends_on:
       - pg
-  mg_services:
+  notification_service:
     build: ./services
     command: python med_notification.py
     ports:
@@ -57,3 +60,14 @@ services:
       - "5433:5433"
     depends_on:
       - pg
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_volume:/home/medguardian/web/staticfiles
+    ports:
+      - 2813:80
+    depends_on:
+      - web
+
+volumes:
+  static_volume:
