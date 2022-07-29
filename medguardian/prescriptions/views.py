@@ -117,13 +117,14 @@ class PrescriberAddSuccessView(MedGuardianViewMixin):
     form_class = PatientPrescriberForm
     template_name = 'prescriber-added.html'
 
-    # def form_valid(self, form):
-    #     data = form.cleaned_data
-    #     pp_association = PatientPrescribers(patient_id=data['patient_id'],
-    #                                         prescriber_id=data['prescriber_id'])
-    #
-    #     pp_association.save()
-    #     return render(self.request, self.template_name)
+    def form_valid(self, form):
+        data = form.cleaned_data
+        # pp_association = PatientPrescribers(patient_id=data['patient_id'],
+        #                                     prescriber_id=data['prescriber_id'])
+        #
+        # pp_association.save()
+        PatientPrescribers.objects.create(patient_id=data['patient_id'], prescriber_id=data['prescriber_id'])
+        return render(self.request, self.template_name)
 
 
 class PrescribersListView(LoginRequiredMixin, UserPassesTestMixin, generics.ListAPIView):
@@ -137,6 +138,7 @@ class PrescribersListView(LoginRequiredMixin, UserPassesTestMixin, generics.List
     def list(self, request, *args, **kwargs):
         prescribers = Prescriber.objects.filter(patients__id=request.user.id)
         serializer = self.serializer_class(prescribers, many=True)
+        print(serializer.data)
         return Response({'prescribers': serializer.data},
                         template_name='prescriber_list.html')
 
@@ -153,6 +155,37 @@ class PrescribersListView(LoginRequiredMixin, UserPassesTestMixin, generics.List
     #
     # def get_context_object_name(self, object_list):
     #     return 'prescribers'
+
+
+class PrescriberRDAPIView(LoginRequiredMixin, UserPassesTestMixin, generics.RetrieveDestroyAPIView):
+
+    def test_func(self) -> bool:
+        return self.request.user.id == self.kwargs['pk']
+
+    def get(self, request, *args, **kwargs):
+        prescriber = get_object_or_404(Prescriber, id=kwargs.get('prescriber_id'))
+
+        context = {
+                    'prescriber': prescriber
+                  }
+
+        return render(request, template_name='prescriber.html', context=comtext)
+
+
+class PrescriberDeleteAPIView(LoginRequiredMixin, UserPassesTestMixin, generics.DestroyAPIView):
+    renderer_classes = [TemplateHTMLRenderer,]
+    permission_classes = [permissions.IsAuthenticated,]
+
+    def test_func(self) -> bool:
+        return self.request.user.id == self.kwargs['pk']
+
+    def delete(self, request, *args, **kwargs):
+        patient_prescriber = get_object_or_404(PatientPrescribers,
+                                               patient_id=request.user.id,
+                                               prescriber_id=kwargs.get('prescriber_id'))
+
+        patient_prescriber.delete()
+        return HttpResponse(status=HTTPStatus.NO_CONTENT)
 
 
 

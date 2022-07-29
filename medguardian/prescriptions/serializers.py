@@ -21,7 +21,8 @@ class PrescriberSerializer(serializers.HyperlinkedModelSerializer):
                   'address',
                   'contact_information',
                   'credentials',
-                  'specialty'
+                  'specialty',
+                  'id'
                  ]
 
 

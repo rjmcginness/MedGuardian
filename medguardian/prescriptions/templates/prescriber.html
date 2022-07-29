@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <form method="DELETE" action="" id="rp_{{ prescriber.id }}">
+        {% csrf_token %}
+        <input type="submit" value="Delete"/>
+    </form>
+    <script>
+        const prescriberID = {{ prescriber.id }};
+        let url = "{% url 'remove_prescriber' pk=request.user.id prescriber_id=prescriberID %}"
+        console.log(url);
+        $(document).ready(function() {
+            let prescriberID = {{ prescriber.id }};
+            console.log(prescriberID);
+
+            $('#rp_{{ prescriber.id }}').on("submit", function (e) {
+                e.preventDefault();
+                $.ajax(url, {
+                        type="DELETE",
+                        success: function(data) {
+                            window.location.href="{% url 'prescribers' pk=request.user.id %}"
+                        },
+                        error: function(data) {
+
+                        }
+                    }
+                );
+            });
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!/^GET|HEAD|OPTIONS|TRACE$/i.test(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'))
+                    }
+                }
+            });
+        });
+    </script>
+
+{% endblock %}

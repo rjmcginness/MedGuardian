@@ -61,6 +61,10 @@ class LoginViewWrap(views.LoginView):
             or, in other words, redirect to medguardian profile
             page.  This allows redirection based on pk.
         '''
+
+        # set the session to expire in 5 minutes (= 60 * 5)
+        self.request.session.set_expiry(300)
+
         return resolve_url('accounts/' + str(self.request.user.pk) + '/profile/')
 
 class LogoutView(TemplateView):

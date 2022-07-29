@@ -15,8 +15,9 @@
         </thead>
         <tbody>
             {% for prescriber in prescribers %}
+
             <tr>
-                <td>{{ prescriber.first_name }} {{ prescriber.last_name }} {{ prescriber.credentials }} }}</td>
+                <td>{{ prescriber.first_name }} {{ prescriber.last_name }} {{ prescriber.credentials }}</td>
                 <td>{{ prescriber.specialty }}</td>
                 <td>
                     {{ prescriber.address.street }}<br>
@@ -27,17 +28,38 @@
                 </td>
                 <td>{{ prescriber.contact_information.home_phone }}</td>
                 <td>
-                    <form method="GET" action="{% url 'edit_prescriber' pk=request.user.id prescriber_id=prescriber.id %}">
-                        {% csrf_token %}
-                        <input type="submit" value="Edit"/>
-                    </form>
-                </td>
-                <td>
-                    <form method="PATCH" action="{% url 'remove_prescriber' pk=request.user.id prescriber_id=prescriber.id %}">
-                        {% csrf_token %}
-                        <input type="submit" value="Delete"/>
-                    </form>
-                    <!--ADD AJAX/JQUERY HERE TO SEND PATCH-->
+{#                    <a href="{% url 'prescriber' pk=request.user.id prescriber_id=prescriber.id %}">view</a>#}
+                <form method="DELETE" action="" id="rp_{{ prescriber.id }}">
+                    {% csrf_token %}
+                    <input type="submit" value="Delete"/>
+                </form>
+                {% if prescriber %}
+                <script>
+                    $(document).ready(function() {
+                        $('#rp_{{ prescriber.id }}').on("submit", function (e) {
+                            e.preventDefault();
+                            let url = "{% url 'remove_prescriber' pk=request.user.id prescriber_id=prescriber.id %}"
+                            $.ajax(url, {
+                                    type:"DELETE",
+                                    success: function(data) {
+                                        window.location.href="{% url 'prescribers' pk=request.user.id %}"
+                                    },
+                                    error: function(data) {
+
+                                    }
+                                }
+                            );
+                        });
+                        $.ajaxSetup({
+                            beforeSend: function (xhr, settings) {
+                                if (!/^GET|HEAD|OPTIONS|TRACE$/i.test(settings.type) && !this.crossDomain) {
+                                    xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'))
+                                }
+                            }
+                        });
+                    });
+                </script>
+                {% endif %}
                 </td>
             </tr>
             {% endfor %}

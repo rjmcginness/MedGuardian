@@ -31,6 +31,8 @@ from prescriptions.views import PrescriberSelectView
 from prescriptions.views import PrescriptionCreateView
 from prescriptions.views import PrescribersListView
 from prescriptions.views import PrescriberAddSuccessView
+from prescriptions.views import PrescriberRDAPIView
+from prescriptions.views import PrescriberDeleteAPIView
 from prescriptions.views import PrescriptionRDView
 from prescriptions.views import AdministrationTimeListView
 from prescriptions.views import PrescriptionUpdateAPIView
@@ -72,10 +74,14 @@ urlpatterns = [
          name='admin_times'),
     path('accounts/<int:pk>/prescribers/new', PrescriberCreateView.as_view(), name='new_prescriber'),
     path('accounts/<int:pk>/prescribers/select', PrescriberSelectView.as_view(), name='select_prescriber'),
+    path('accounts/<int:pk>/prescribers/<int:prescriber_id>', PrescriberRDAPIView.as_view(), name='prescriber'),
     path('accounts/<int:pk>/prescribers', PrescribersListView.as_view(), name='prescribers'),
-    path('account/<int:pk>/prescriber/<int:prescriber_id>/added',
+    path('accounts/<int:pk>/prescribers/<int:prescriber_id>/added',
          PrescriberAddSuccessView.as_view(),
          name='prescriber_add_success'),
+    path('accounts/<int:pk>/prescribers/<int:prescriber_id>/delete',
+         PrescriberDeleteAPIView.as_view(),
+         name='remove_prescriber'),
     path('accounts/<int:pk>/medications', medications.views.ActiveMedProfileViewSet.as_view(), name='medications'),
     path('accounts/<int:pk>/prescriptions/today', TodaysMedicationsListView.as_view(), name='todays_meds'),
     path('accounts/<int:pk>/prescriptions/today/download', download_todays_meds, name='todays_meds_download'),
