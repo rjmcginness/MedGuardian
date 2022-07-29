@@ -32,5 +32,8 @@ class DBWrapper:
 
         return result
 
+    def close(self) -> None:
+        self.engine.close()
+
 def make_db_url(dialect, driver, user, password, host, port, name) -> str:
     return dialect + '+' + driver + '://' + user + ':' + password + '@' + host + ':' + port + '/' + name

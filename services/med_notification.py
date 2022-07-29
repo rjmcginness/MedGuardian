@@ -15,7 +15,7 @@ from db_access import execute_statement
 
 
 
-def patients_to_notify(admin_time: datetime.datetime.time) -> Tuple[tuple]:
+def patients_to_notify(db, admin_time: datetime.datetime.time) -> Tuple[tuple]:
     '''
                 Query database for patients to notify if they have medication
                 to be administered at admin_time
@@ -32,10 +32,11 @@ def patients_to_notify(admin_time: datetime.datetime.time) -> Tuple[tuple]:
 
             '''
 
-    result = execute_statement(get_db(), stmt, 'DB error in notification')
+    result = execute_statement(db, stmt, 'DB error in notification')
     return list(result) if result else result
 
 if __name__ == '__main__':
+    db = get_db()
     clock = Clock(synchronize=True)
     increment = clock.increment * 60
     next(clock)  # bump ahead a little
@@ -44,7 +45,7 @@ if __name__ == '__main__':
         try:
             # Get names and numbers of patients to notify
             admin_time = next(clock)
-            notification_list = patients_to_notify(admin_time=admin_time)
+            notification_list = patients_to_notify(db, admin_time=admin_time)
 
             client = Client(config('TWILIO_ACCOUNT_SID'), config('TWILIO_AUTH_TOKEN'))
             server_number = config('TWILIO_NUMBER')
