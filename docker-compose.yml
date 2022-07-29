@@ -15,6 +15,20 @@ services:
       - DATABASE=postgres
     depends_on:
       - pg
+  mg_services:
+    build: ./services
+    command: python med_notification.py
+    ports:
+      - 8002:8002
+    environment:
+      - DB_NAME=medguardian_db
+      - DB_USER=postgres
+      - DB_PASSWORD=brongirl9
+      - DB_HOST=pg
+      - DB_PORT=5432
+      - DATABASE=postgres
+    depends_on:
+      - pg
   pg:
     container_name: pg_container
     image: postgres:14.4-alpine3.16
