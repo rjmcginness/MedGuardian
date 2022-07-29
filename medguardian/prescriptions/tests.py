@@ -122,3 +122,7 @@ def test_patient_prescriber(create_patient, create_prescriber):
     pp_association = PatientPrescribers.objects.filter(patient_id=patient.id)
 
     assert pp_association.count() > 0
+
+
+def test_generate_prescriptions_pdf():
+    pass

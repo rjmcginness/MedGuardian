@@ -1,3 +1,4 @@
+import rest_framework.serializers
 from django.shortcuts import render
 from django.shortcuts import reverse
 from django.shortcuts import redirect
@@ -17,8 +18,13 @@ from rest_framework.response import Response
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework import permissions
 from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
 from typing import List
+from datetime import datetime
+from datetime import time as tm
 import json
+import io
+
 
 from .forms import PrescriberSelectForm
 from .forms import PrescriptionCreateForm
@@ -378,11 +384,153 @@ class TodaysMedicationsListView(LoginRequiredMixin, UserPassesTestMixin, generic
                         template_name='prescriptions-today.html')
 
 def verify_user(request):
-    return request.user.id == request.session.get('pk')
+    return request.is_authenticated
+
+def check_new_page(offset) -> bool:
+    return offset <= 0
+
+def rx_data_to_output_str(rx_list: rest_framework.serializers.ReturnList,
+                          c: canvas.Canvas,
+                          offset: int,
+                          font_height: int) -> None:
+    width, height = letter
+    page_width = width - 30
+
+    for rx in rx_list:
+        if check_new_page(offset):
+            c.showPage()
+            offset = height - 20
+
+        c.setFont('Courier-Bold', font_height)
+        c.drawString(14, offset, 'RX')
+        c.setFont('Times-Roman', font_height)
+        offset -= font_height + 2
+        meds = rx.get('medications')
+        med_strings = (med.get('generic_name') + ' (' + med.get('brand_name') + ') ' + med.get('strength_text') +\
+                       ' ' + med.get('dosage_form') for med in meds)
+        for med_str in med_strings:
+            if check_new_page(offset):
+                c.showPage()
+                offset = height - 20
+
+            cuts = (30 + c.stringWidth(med_str))//page_width
+            if cuts > 1:
+                cuts = int(cuts) + 1
+                shift = len(med_str)//cuts
+                for _ in range(cuts):
+                    c.drawString(16, offset, med_str[:shift])
+                    med_str = med_str[shift:]
+                    offset -= font_height + 1
+            else:
+                c.drawString(16, offset, med_str)
+                offset -= font_height + 1
+
+        offset -= 1
+        if check_new_page(offset):
+            c.showPage()
+            offset = height - 20
+
+        routes = rx.get('routes')
+        for route in routes:
+            c.drawString(16, offset, route.get('name'))
+            offset -= font_height + 1
+            if check_new_page(offset):
+                c.showPage()
+                offset = height - 20
+
+        offset -= 1
+        if check_new_page(offset):
+            c.showPage()
+            offset = height - 20
+
+        if instructions := rx.get('instructions'):
+            c.drawString(16, offset, instructions)
+            offset -= font_height + 1
+
+        if check_new_page(offset):
+            c.showPage()
+            offset = height - 20
+
+        c.drawString(16, offset, "Take at: ")
+        admin_times = (tm.fromisoformat(admin_time.get('value')).strftime('%I:%M %p') \
+                       for admin_time in rx.get('administration_times'))
+
+        time_str = ', '.join(admin_times)
+        c.drawString(16 + c.stringWidth('Take at: '), offset, time_str)
+        offset -= font_height + 1
+
+        if check_new_page(offset):
+            c.showPage()
+            offset = height - 20
+
+        if rx.get('is_prn'):
+            c.drawString(16, offset, 'Take as needed for ' + rx.get('prn_reason'))
+            offset -= font_height + 1
+
+        if check_new_page(offset):
+            c.showPage()
+            offset = height - 20
+            
+        prescriber = rx.get('prescriber')
+
+        first_name = prescriber.get('last_name')
+        last_name = prescriber.get('first_name')
+        creds = prescriber.get('credentials')
+        phone = prescriber.get('contact_information').get('home_phone')
+        prescriber_str = 'Prescriber: ' + first_name + ', ' + last_name
+        prescriber_str += ', ' + creds if creds else ''
+        prescriber_str += ' phone: '
+        prescriber_str += phone if phone else ''
+
+        c.drawString(16, offset,  prescriber_str)
+
+        offset -= font_height + 2
+
+def generate_prescriptions_pdf(patient: Patient, active_only: bool=True):
+
+    current_dt = datetime.now()
+    buffer = io.BytesIO()
+    title = patient.last_name + ', ' + patient.first_name + ' generated ' + current_dt.ctime()
+
+    width, height = letter
+    c = canvas.Canvas(buffer, pagesize=letter)
+    c.setTitle(title)
+    c.setFont('Times-Roman', 18)
+    offset = height - 20
+    c.drawString(10, offset, "Medications to Take Today")
+    offset -= 2
+    c.setLineWidth(0.5)
+    c.line(10, offset, width - 10, offset)
+
+    font_height = 14
+    c.setFont('Times-Roman', font_height)
+    offset -= font_height + 1
+
+    c.drawString(10, offset, title)
+    offset -= font_height + 3
+    font_height = 12
+
+    prescriptions = None
+    if active_only:
+        prescriptions = Prescription.objects.filter(patient_id=patient.id, is_active=True)
+    else:
+        prescriptions = Prescription.objects.filter(patient_id=patient.id)
+
+    # convert to list to avoid inadvertent db hits (get it all now)
+    rx_list = PrescriptionSerializer(prescriptions, many=True).data
+
+    rx_data_to_output_str(rx_list, c, offset, font_height)
+
+    c.showPage()
+    c.save()
+    buffer.seek(0)
+
+    return FileResponse(buffer, as_attachment=True, filename=patient.last_name + "_" +\
+                                                             patient.first_name + \
+                                                             current_dt.date().strftime('%b_%d_%y') + '.pdf')
 
 @login_required()
 @user_passes_test(test_func=verify_user)
-def download_todays_meds(request) -> HttpResponse:
+def download_todays_meds(request, pk) -> HttpResponse:
 
-
-    return HttpResponse("Hello", content_type='application/pdf,text/plain')
+    return generate_prescriptions_pdf(Patient.objects.get(pk=request.user.id))

@@ -60,6 +60,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-submenu">
                               <li><a class="dropdown-item" href="{% url 'medications' pk=request.user.id %}">Medications</a></li>
+                              <li><a class="dropdown-item" href="{% url 'todays_meds' pk=request.user.id %}">Today's Medications</a></li>
                               <li><a class="dropdown-item" href="{% url 'new_rx' pk=request.user.id %}">New Prescription</a></li>
                             </ul>
                         </li>
@@ -71,6 +72,14 @@
                               <li><a class="dropdown-item" href="{% url 'prescribers' pk=request.user.id %}">Prescribers</a></li>
                               <li><a class="dropdown-item" href="{% url 'new_prescriber' pk=request.user.id %}">New Prescriber</a></li>
                               <li><a class="dropdown-item" href="{% url 'select_prescriber' pk=request.user.id %}">Find Prescriber</a></li>
+                            </ul>
+                        </li>
+                        <li><!--Sub Menu-->
+                            <a class="dropdown-item" href="#">
+                              Downloads &raquo;
+                            </a>
+                            <ul class="dropdown-menu dropdown-submenu">
+                              <li><a class="dropdown-item" href="{% url 'todays_meds_download' pk=request.user.id %}">Today's Medications</a></li>
                             </ul>
                         </li>
                         </ul>

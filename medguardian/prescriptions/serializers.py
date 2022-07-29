@@ -83,3 +83,4 @@ class PrescriptionSerializer(serializers.HyperlinkedModelSerializer):
                     'is_prn',
                     'prn_reason'
                  ]
+

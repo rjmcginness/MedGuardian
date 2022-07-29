@@ -111,6 +111,7 @@ class Prescription(models.Model):
         constraints = [constraints.UniqueConstraint(fields=['id', 'patient_id', 'prescriber_id'],
                                                     name='rx_unique'),]
 
+
 class Administration(models.Model):
     quantity_administered = models.FloatField(help_text='Quantity administered')
     date_time_taken = models.DateTimeField(default=timezone.now(),
