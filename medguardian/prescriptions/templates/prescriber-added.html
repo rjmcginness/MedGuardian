@@ -2,4 +2,6 @@
 
 {% block content %}
     <h4>New Prescriber Added.</h4>
+    <p>{{ prescriber.last_name }}, {{ prescriber.first_name }} {{ prescriber.credentials }}</p>
+    <a href="{% url 'prescriber' pk=request.user.id %}">My Prescribers</a>
 {% endblock %}

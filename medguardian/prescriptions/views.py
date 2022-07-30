@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import FormView
 from django.views.generic import DetailView
+from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
@@ -43,16 +44,13 @@ from .serializers import PrescriptionSerializer
 from src.user_model import Patient
 
 
-class MedGuardianViewMixin(LoginRequiredMixin, UserPassesTestMixin, FormView):
+class MedGuardianSecureViewMixin(LoginRequiredMixin, UserPassesTestMixin):
     def test_func(self) -> bool:
         return self.request.user.id == self.kwargs['pk']
 
-    def form_valid(self, form):
-        form.save()
-        return super().form_valid(form)
 
 
-class PrescriberCreateView(MedGuardianViewMixin):
+class PrescriberCreateView(MedGuardianSecureViewMixin, FormView):
     form_class = PrescriberCreateForm
     template_name = 'prescriber-create.html'
     success_url = '/accounts/<int:pk>/prescribers/success'
@@ -64,16 +62,21 @@ class PrescriberCreateView(MedGuardianViewMixin):
 
     def form_valid(self, form):
         form.set_patient_id(self.request.user.id)
-        form.save()
-        context = {
+        prescriber = form.save()
+        kwargs = {
             'pk': self.request.user.id,
-            'prescriber_id': self.kwargs['prescriber_id']
+            'prescriber_id': prescriber.id
         }
 
-        return render(self.request, reverse('prescriber_add_success'), context)
+        context = {
+            'prescriber': prescriber
+        }
 
 
-class PrescriberSelectView(MedGuardianViewMixin):
+        return render(self.request, template_name='prescriber-added.html', context=context)
+
+
+class PrescriberSelectView(MedGuardianSecureViewMixin, FormView):
     form_class = PrescriberSelectForm
     template_name = 'prescriber-search.html'
     success_url = '/accounts/<int:pk>/prescribers/success'
@@ -102,38 +105,20 @@ class PrescriberSelectView(MedGuardianViewMixin):
 
         patient_prescribers.save()
 
-        context = {
+        kwargs = {
             'pk': self.request.user.id,
-            'prescriber_id': self.kwargs.get('prescriber_id')
         }
-        return render(self.request, reverse('prescriber_add_success'), context)
+        return render(self.request, reverse('prescribers', kwargs=kwargs))
 
-class PrescriberView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+class PrescriberView(MedGuardianSecureViewMixin, DetailView):
     model = Prescriber
     template_name = 'prescriber.html'
-    
-
-class PrescriberAddSuccessView(MedGuardianViewMixin):
-    form_class = PatientPrescriberForm
-    template_name = 'prescriber-added.html'
-
-    def form_valid(self, form):
-        data = form.cleaned_data
-        # pp_association = PatientPrescribers(patient_id=data['patient_id'],
-        #                                     prescriber_id=data['prescriber_id'])
-        #
-        # pp_association.save()
-        PatientPrescribers.objects.create(patient_id=data['patient_id'], prescriber_id=data['prescriber_id'])
-        return render(self.request, self.template_name)
 
 
-class PrescribersListView(LoginRequiredMixin, UserPassesTestMixin, generics.ListAPIView):
+class PrescribersListView(MedGuardianSecureViewMixin, generics.ListAPIView):
     serializer_class = PrescriberSerializer
     renderer_classes = [TemplateHTMLRenderer]
     permission_classes = [permissions.IsAuthenticated,]
-
-    def test_func(self) -> bool:
-        return self.request.user.id == self.kwargs['pk']
 
     def list(self, request, *args, **kwargs):
         prescribers = Prescriber.objects.filter(patients__id=request.user.id)
@@ -142,25 +127,8 @@ class PrescribersListView(LoginRequiredMixin, UserPassesTestMixin, generics.List
         return Response({'prescribers': serializer.data},
                         template_name='prescriber_list.html')
 
-    # model = Prescriber
-    # template_name = 'prescriber_list.html'
-    # paginate_by = 10
 
-
-
-    # ######WORKING HERE: FINISH
-    # def get_queryset(self):
-    #     print('>>>>>>>>>', Prescriber.objects.filter(patients__id=self.request.user.id).order_by('last_name').count())
-    #     return Prescriber.objects.filter(patients__id=self.request.user.id).order_by('last_name')
-    #
-    # def get_context_object_name(self, object_list):
-    #     return 'prescribers'
-
-
-class PrescriberRDAPIView(LoginRequiredMixin, UserPassesTestMixin, generics.RetrieveDestroyAPIView):
-
-    def test_func(self) -> bool:
-        return self.request.user.id == self.kwargs['pk']
+class PrescriberRDAPIView(MedGuardianSecureViewMixin, generics.RetrieveDestroyAPIView):
 
     def get(self, request, *args, **kwargs):
         prescriber = get_object_or_404(Prescriber, id=kwargs.get('prescriber_id'))
@@ -169,15 +137,12 @@ class PrescriberRDAPIView(LoginRequiredMixin, UserPassesTestMixin, generics.Retr
                     'prescriber': prescriber
                   }
 
-        return render(request, template_name='prescriber.html', context=comtext)
+        return render(request, template_name='prescriber.html', context=context)
 
 
-class PrescriberDeleteAPIView(LoginRequiredMixin, UserPassesTestMixin, generics.DestroyAPIView):
+class PrescriberDeleteAPIView(MedGuardianSecureViewMixin, generics.DestroyAPIView):
     renderer_classes = [TemplateHTMLRenderer,]
     permission_classes = [permissions.IsAuthenticated,]
-
-    def test_func(self) -> bool:
-        return self.request.user.id == self.kwargs['pk']
 
     def delete(self, request, *args, **kwargs):
         patient_prescriber = get_object_or_404(PatientPrescribers,
@@ -188,28 +153,15 @@ class PrescriberDeleteAPIView(LoginRequiredMixin, UserPassesTestMixin, generics.
         return HttpResponse(status=HTTPStatus.NO_CONTENT)
 
 
-
-
-
-class PrescriptionCreateView(LoginRequiredMixin, UserPassesTestMixin, FormView):
+class PrescriptionCreateView(MedGuardianSecureViewMixin, FormView):
     form_class = PrescriptionCreateForm
     template_name = 'prescription-create.html'
     success_url = '/medications'
-
-    def test_func(self) -> bool:
-        return self.request.user.id == self.kwargs['pk']
 
     def get_form_kwargs(self, *args, **kwargs):
         kwargs = super(PrescriptionCreateView, self).get_form_kwargs(*args, **kwargs)
         kwargs['pk'] = self.request.user.id
         return kwargs
-
-    # def get(self, request, *arg, **kwargs):
-    #     context = super(PrescriptionCreateView, self).get_context_data(**kwargs)
-    #
-    #     context.update({'pk': request.user.id})
-    #
-    #     return self.render_to_response(context)
 
     def form_valid(self, form):
         # form.set_patient_id(self.request.user.id)
@@ -224,13 +176,10 @@ class PrescriptionCreateView(LoginRequiredMixin, UserPassesTestMixin, FormView):
         return redirect(to=reverse('medications', kwargs=context))
 
 
-class ActiveMedProfileViewSet(LoginRequiredMixin, UserPassesTestMixin, generics.ListAPIView):
+class ActiveMedProfileViewSet(MedGuardianSecureViewMixin, generics.ListAPIView):
     serializer_class = PrescriptionSerializer
     renderer_classes = [TemplateHTMLRenderer]
     permission_classes = [permissions.IsAuthenticated,]
-
-    def test_func(self) -> bool:
-        return self.request.user.id == self.kwargs['pk']
 
     def list(self, request, *args, **kwargs):
         rx_list = Prescription.objects.filter(
@@ -241,12 +190,9 @@ class ActiveMedProfileViewSet(LoginRequiredMixin, UserPassesTestMixin, generics.
                         template_name='active-medications.html')
 
 
-class PrescriptionRDView(LoginRequiredMixin, UserPassesTestMixin, generics.RetrieveDestroyAPIView):
+class PrescriptionRDView(MedGuardianSecureViewMixin, generics.RetrieveDestroyAPIView):
     serializer_class = PrescriptionSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-    def test_func(self) -> bool:
-        return self.request.user.id == self.kwargs['pk']
 
     def get_object(self, pk):
         try:
@@ -274,7 +220,7 @@ class PrescriptionRDView(LoginRequiredMixin, UserPassesTestMixin, generics.Retri
         return redirect(to=reverse('prescriptions', kwargs=context))
 
 
-class AdministrationTimeListView(LoginRequiredMixin, UserPassesTestMixin, generics.ListAPIView):
+class AdministrationTimeListView(MedGuardianSecureViewMixin, generics.ListAPIView):
     serializer_class = PrescriptionSerializer
     renderer_classes = [TemplateHTMLRenderer,]
     permission_classes = [permissions.IsAuthenticated,]
@@ -289,11 +235,8 @@ class AdministrationTimeListView(LoginRequiredMixin, UserPassesTestMixin, generi
         return Response({'prescription': serializer.data},
                         template_name='administration-times.html')
 
-    def test_func(self)-> bool:
-        return self.request.user.id == self.kwargs['pk']
 
-
-class PrescriptionUpdateAPIView(LoginRequiredMixin, UserPassesTestMixin, generics.mixins.UpdateModelMixin, FormView):
+class PrescriptionUpdateAPIView(MedGuardianSecureViewMixin, generics.mixins.UpdateModelMixin, FormView):
     permission_classes = [permissions.IsAuthenticated,]
     form_class = PrescriptionEditForm
     template_name = 'administration-times-edit.html'
@@ -305,10 +248,8 @@ class PrescriptionUpdateAPIView(LoginRequiredMixin, UserPassesTestMixin, generic
 
         return render(request, template_name=self.template_name, context=context)
 
-    def test_func(self)-> bool:
-        return self.request.user.id == self.kwargs['pk']
-
     def form_valid(self, form):
+        '''Prevent Post'''
         raise Http404()
 
     def get_object(self):
@@ -398,13 +339,10 @@ class PrescriptionUpdateAPIView(LoginRequiredMixin, UserPassesTestMixin, generic
         ContactTimes.objects.bulk_create(new_contact_times)
 
 
-class TodaysMedicationsListView(LoginRequiredMixin, UserPassesTestMixin, generics.ListAPIView):
+class TodaysMedicationsListView(MedGuardianSecureViewMixin, generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated,]
     renderer_classes = [TemplateHTMLRenderer,]
     serializer_class = PrescriptionSerializer
-
-    def test_func(self)-> bool:
-        return self.request.user.id == self.kwargs['pk']
 
     def get_queryset(self):
         return Prescription.objects.filter(patient_id=self.request.user.id, is_active=True)

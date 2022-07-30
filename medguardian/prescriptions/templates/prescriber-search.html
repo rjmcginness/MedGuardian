@@ -30,7 +30,7 @@
                 <td>{{ prescriber.address }}</td>
                 <td>{{ prescriber.contact_information.home_phone }}</td>
                 <td>
-                    <form method="POST" action="{% url 'prescriber_add_success' pk=request.user.id prescriber_id=prescriber.id %}">
+                    <form method="POST" action="{% url 'prescriber_add' pk=request.user.id prescriber_id=prescriber.id %}">
                         {% csrf_token %}
                         <input hidden type="number" name="patient_id" value="{{ request.user.id }}"/>
                         <input hidden type="number" name="prescriber_id" value="{{ prescriber.id }}"/>
