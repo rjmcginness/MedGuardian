@@ -1,7 +1,5 @@
 FROM python:3.8
 
-MAINTAINER Robert J McGinness
-
 EXPOSE 8002
 
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -11,8 +9,12 @@ ENV PYTHONBUFFERED=1
 COPY requirements.txt .
 RUN python -m pip install -r requirements.txt
 
+# RUN mkdir /home/medguardian/data
+WORKDIR /home/medguardian/data
+COPY ./data /home/medguardian/data
+
 WORKDIR /services
 COPY . /services
 
-CMD ["python", "./services/med_notification.py"]
+CMD ["python", "med_notification.py"]
 

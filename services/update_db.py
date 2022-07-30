@@ -6,9 +6,13 @@ from decouple import config
 import csv
 from typing import Tuple
 
-from .service_utils import Clock
-from .db_access import get_db
-from .db_access import execute_statement
+# from .service_utils import Clock
+# from .db_access import get_db
+# from .db_access import execute_statement
+
+from service_utils import Clock
+from db_access import get_db
+from db_access import execute_statement
 
 def update_admin_routes(db, data_file_name: str) -> None:
 
