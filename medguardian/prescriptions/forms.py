@@ -89,9 +89,15 @@ class PrescriberSelectForm(forms.Form):
                               help_text="State where your doctor practices")
 
 
-class PatientPrescriberForm(forms.Form):
-    patient_id = forms.IntegerField(widget=forms.HiddenInput())
-    prescriber_id = forms.IntegerField(widget=forms.HiddenInput())
+# class PatientPrescriberForm(forms.ModelForm):
+#     patient_id = forms.IntegerField(widget=forms.HiddenInput())
+#     prescriber_id = forms.IntegerField(widget=forms.HiddenInput())
+#
+#     def save(self, commit=True):
+#         data = self.clean()
+
+
+
 
 class PrescriptionCreateForm(forms.ModelForm):
 

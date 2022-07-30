@@ -29,7 +29,6 @@ import io
 
 from .forms import PrescriberSelectForm
 from .forms import PrescriptionCreateForm
-from .forms import PatientPrescriberForm
 from .forms import PrescriberCreateForm
 from .forms import PrescriptionEditForm
 
@@ -100,19 +99,28 @@ class PrescriberSelectView(MedGuardianSecureViewMixin, FormView):
         return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
-        patient_prescribers = PatientPrescribers.objects.create(patient_id=self.kwargs.get('pk'),
-                                                                prescriber_id=self.kwargs.get('prescriber_id'))
-
-        patient_prescribers.save()
+        data = form.cleaned_data
+        patient_id = data.get('pk')
+        prescriber_id = data.get('prescriber_id')
+        if not PatientPrescribers.objects.filter(patient_id=patient_id, prescriber_id=prescriber_id).exists():
+            patient_prescribers = PatientPrescribers.objects.create(patient_id=patient_id, prescriber_id=prescriber_id)
 
         kwargs = {
             'pk': self.request.user.id,
         }
         return render(self.request, reverse('prescribers', kwargs=kwargs))
 
-class PrescriberView(MedGuardianSecureViewMixin, DetailView):
-    model = Prescriber
+class PrescriberChosenView(MedGuardianSecureViewMixin, TemplateView):
     template_name = 'prescriber.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        patient_id = kwargs.get('pk')
+        prescriber_id = kwargs.get('prescriber_id')
+
+        if not PatientPrescribers.objects.filter(patient_id=patient_id, prescriber_id=prescriber_id).exists():
+            PatientPrescribers.objects.create(patient_id=patient_id, prescriber_id=prescriber_id)
+
+        return render(self.request, template_name='prescriber-added.html', context=context)
 
 
 class PrescribersListView(MedGuardianSecureViewMixin, generics.ListAPIView):

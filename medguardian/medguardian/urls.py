@@ -32,6 +32,7 @@ from prescriptions.views import PrescriptionCreateView
 from prescriptions.views import PrescribersListView
 from prescriptions.views import PrescriberRDAPIView
 from prescriptions.views import PrescriberDeleteAPIView
+from prescriptions.views import PrescriberChosenView
 from prescriptions.views import PrescriptionRDView
 from prescriptions.views import AdministrationTimeListView
 from prescriptions.views import PrescriptionUpdateAPIView
@@ -75,6 +76,9 @@ urlpatterns = [
     path('accounts/<int:pk>/prescribers/select', PrescriberSelectView.as_view(), name='select_prescriber'),
     path('accounts/<int:pk>/prescribers/<int:prescriber_id>', PrescriberRDAPIView.as_view(), name='prescriber'),
     path('accounts/<int:pk>/prescribers', PrescribersListView.as_view(), name='prescribers'),
+    path('accounts/<int:pk>/prescribers/<int:prescriber_id>/selected',
+         PrescriberChosenView.as_view(),
+         name='prescriber_chosen'),
     path('accounts/<int:pk>/prescribers/<int:prescriber_id>/delete',
          PrescriberDeleteAPIView.as_view(),
          name='remove_prescriber'),
