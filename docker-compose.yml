@@ -16,6 +16,7 @@ services:
       - DB_HOST=pg
       - DB_PORT=5432
       - DATABASE=postgres
+    entrypoint: /entrypoint.sh
     depends_on:
       - pg
   pg:
@@ -59,7 +60,7 @@ services:
       - DB_PORT=5432
       - DATABASE=postgres
     depends_on:
-      - pg
+      - web
   db_load:
     build: ./services
     command: python update_db.py
@@ -72,6 +73,7 @@ services:
       - DB_HOST=pg
       - DB_PORT=5432
       - DATABASE=postgres
+    entrypoint: /entrypoint.sh
     depends_on:
       - pg
   nginx:

@@ -47,12 +47,14 @@ if __name__ == '__main__':
             admin_time = next(clock)
             notification_list = patients_to_notify(db, admin_time=admin_time)
 
-            client = Client(config('TWILIO_ACCOUNT_SID'), config('TWILIO_AUTH_TOKEN'))
-            server_number = config('TWILIO_NUMBER')
-            for notify_target in notification_list:
-                client.messages.create(to=notify_target[1],
-                                       from_=server_number,
-                                       body=f'Hello! A reminder from MedGuardian.')
+            # if there are numbers to notify, do so
+            if notification_list:
+                client = Client(config('TWILIO_ACCOUNT_SID'), config('TWILIO_AUTH_TOKEN'))
+                server_number = config('TWILIO_NUMBER')
+                for notify_target in notification_list:
+                    client.messages.create(to=notify_target[1],
+                                           from_=server_number,
+                                           body=f'Hello! A reminder from MedGuardian.')
 
             time.sleep(increment)
         except KeyboardInterrupt:

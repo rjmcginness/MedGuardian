@@ -14,6 +14,9 @@ COPY requirements.txt .
 RUN python -m pip install -r requirements.txt
 
 
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 ENV HOME=/home/medguardian
 ENV APP_HOME=/home/medguardian/web
 RUN mkdir -p $APP_HOME
@@ -21,7 +24,11 @@ RUN mkdir $APP_HOME/staticfiles
 WORKDIR $APP_HOME
 
 COPY . $APP_HOME
+# COPY ./.env $APP_HOME
 
+
+# RUN python manage.py makemigrations --noinput
+# RUN python manage.py migrate --noinput
 
 
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
@@ -31,3 +38,5 @@ COPY . $APP_HOME
 
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "medguardian.wsgi"]
+
+

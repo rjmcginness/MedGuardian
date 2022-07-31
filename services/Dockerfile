@@ -16,5 +16,8 @@ COPY ./data /home/medguardian/data
 WORKDIR /services
 COPY . /services
 
-CMD ["python", "med_notification.py"]
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# CMD ["python", "med_notification.py"]
 
