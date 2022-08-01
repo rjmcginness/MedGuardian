@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path
 from django.urls import include
 from rest_framework import routers
+from django.conf.urls.static import static
+from django.conf import settings
 
 import medications.views
 import medications.forms
@@ -92,4 +94,4 @@ urlpatterns = [
     path('medications/create', medications.views.medication_create),
     path('accounts/', include(('django.contrib.auth.urls', 'auth'), namespace='accounts')),
     path('admin/', admin.site.urls),
-]
+] + static(setting.STATIC_URL, document_root=settings.STATIC_ROOT)
