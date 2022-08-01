@@ -14,40 +14,42 @@ services:
       - DB_NAME=medguardian_db
       - DB_USER=postgres
       - DB_PASSWORD=brongirl9
-      - DB_HOST=pg
+      - DB_HOST=medguardian.c7zbj5g2txwt.us-east-1.rds.amazonaws.com
       - DB_PORT=5432
       - DATABASE=postgres
+      - VIRTUAL_HOST=ec2-50-16-207-76.compute-1.amazonaws.com
+      - VIRTUAL_PORT=8000
     entrypoint: /entrypoint.sh
-    depends_on:
-      - pg
-  # pg:
-  #   container_name: pg_container
-  #   image: postgres:14.4-alpine3.16
-  #   restart: always
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: brongirl9
-  #     POSTGRES_DB: medguardian_db
-  #     POSTGRES_HOST_AUTH_METHOD: trust
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - ./data:/data
-  #     - ./data/misc/medguardian_db_init.sql:/docker-entrypoint-initdb.d/1-django-init.sql
-  # pgadmin:
-  #   container_name: pgadmin_container
-  #   image: dpage/pgadmin4:6.11
-  #   restart: always
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: admin@example.com
-  #     PGADMIN_DEFAULT_PASSWORD: brongirl9
-  #     PGADMIN_LISTEN_PORT: 5433
-  #     PGADMIN_CONFIG_SERVER_MODE: "False"
-  #     PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
-  #   ports:
-  #     - "5433:5433"
-  #   depends_on:
-  #     - pg
+    # depends_on:
+    #   - pg
+    # pg:
+    #   container_name: pg_container
+    #   image: postgres:14.4-alpine3.16
+    #   restart: always
+    #   environment:
+    #     POSTGRES_USER: postgres
+    #     POSTGRES_PASSWORD: brongirl9
+    #     POSTGRES_DB: medguardian_db
+    #     POSTGRES_HOST_AUTH_METHOD: trust
+    #   ports:
+    #     - "5432:5432"
+    #   volumes:
+    #     - ./data:/data
+    #     - ./data/misc/medguardian_db_init.sql:/docker-entrypoint-initdb.d/1-django-init.sql
+    # pgadmin:
+    #   container_name: pgadmin_container
+    #   image: dpage/pgadmin4:6.11
+    #   restart: always
+    #   environment:
+    #     PGADMIN_DEFAULT_EMAIL: admin@example.com
+    #     PGADMIN_DEFAULT_PASSWORD: brongirl9
+    #     PGADMIN_LISTEN_PORT: 5433
+    #     PGADMIN_CONFIG_SERVER_MODE: "False"
+    #     PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    #   ports:
+    #     - "5433:5433"
+    #   depends_on:
+    #     - pg
   notification_service:
     build: ./services
     image: 818271266998.dkr.ecr.us-east-1.amazonaws.com/medguardian:medguardian_notification_service
@@ -55,17 +57,19 @@ services:
     expose:
       - 8002
     environment:
-      - DB_NAME=medguardian_db
+      - - DB_NAME=medguardian_db
       - DB_USER=postgres
       - DB_PASSWORD=brongirl9
-      - DB_HOST=pg
+      - DB_HOST=medguardian.c7zbj5g2txwt.us-east-1.rds.amazonaws.com
       - DB_PORT=5432
       - DATABASE=postgres
+      - VIRTUAL_HOST=ec2-50-16-207-76.compute-1.amazonaws.com
+      - VIRTUAL_PORT=8000
     depends_on:
       - web
   db_load:
     build: ./services
-    image: image: 818271266998.dkr.ecr.us-east-1.amazonaws.com/medguardian:medguardian_db_load
+    image: 818271266998.dkr.ecr.us-east-1.amazonaws.com/medguardian:medguardian_db_load
     command: python update_db.py
     expose:
       - 8003
@@ -73,14 +77,17 @@ services:
       - DB_NAME=medguardian_db
       - DB_USER=postgres
       - DB_PASSWORD=brongirl9
-      - DB_HOST=pg
+      - DB_HOST=medguardian.c7zbj5g2txwt.us-east-1.rds.amazonaws.com
       - DB_PORT=5432
       - DATABASE=postgres
+      - VIRTUAL_HOST=ec2-50-16-207-76.compute-1.amazonaws.com
+      - VIRTUAL_PORT=8000
     entrypoint: /entrypoint.sh
     depends_on:
-      - pg
+      - web
   nginx:
     build: ./nginx
+    image: 818271266998.dkr.ecr.us-east-1.amazonaws.com/medguardian:medguardian_nginx
     volumes:
       - static_volume:/home/medguardian/web/staticfiles
     ports:
