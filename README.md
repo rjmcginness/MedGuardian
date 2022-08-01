@@ -37,5 +37,6 @@
       <li>Separate notification service that pushes SMS alerts shortly before medications are to be taken</li>
     </ul>
   </li>
+  <li>NGINX proxy server</li>
 </ul>
 
