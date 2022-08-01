@@ -94,4 +94,4 @@ urlpatterns = [
     path('medications/create', medications.views.medication_create),
     path('accounts/', include(('django.contrib.auth.urls', 'auth'), namespace='accounts')),
     path('admin/', admin.site.urls),
-] + static(settings.STATIC_URL, document_root=setting.STATIC_ROOT)
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
