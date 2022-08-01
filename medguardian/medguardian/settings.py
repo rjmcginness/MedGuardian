@@ -33,7 +33,7 @@ CSRF_TRUSTED_ORIGINS = ['http://localhost:2813',
                         'http://127.0.0.1:2813',
                         'http://ec2-50-16-207-76.compute-1.amazonaws.com',
                         'http://ec2-50-16-207-76.compute-1.amazonaws.com:8000',
-                        'http://ec2-50-16-207-76.compute-1.amazonaws.com:80']
+                        'http://ec2-50-16-207-76.compute-1.amazonaws.com:2813']
 
 # Application definition
 
@@ -140,10 +140,13 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
-
+if DEBUG:
+    STATICFILES_DIR = [os.path.join(BASE_DIR, 'static')]
+else:
+    STATIC_ROOT = [os.path.join(BASE_DIR, 'static')]
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+# STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 
