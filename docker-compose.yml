@@ -4,7 +4,7 @@ services:
     command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
       - ./medguardian:/usr/src/medguardian/
-      - static_volume:/home/static
+      - static_volume:/home/medguardian/web/staticfiles
     # ports:
     #   - 8000:8000
     expose:
@@ -79,7 +79,7 @@ services:
   nginx:
     build: ./nginx
     volumes:
-      - static_volume:/home/static
+      - static_volume:/home/medguardian/web/staticfiles
     ports:
       - 2813:80
     depends_on:

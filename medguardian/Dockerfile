@@ -24,7 +24,7 @@ RUN mkdir $APP_HOME/staticfiles
 WORKDIR $APP_HOME
 
 COPY . $APP_HOME
-# COPY ./.env $APP_HOME
+COPY ./static $APP_HOME/staticfiles
 
 
 # RUN python manage.py makemigrations --noinput
