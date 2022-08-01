@@ -2,7 +2,7 @@ services:
   web:
     build: ./medguardian
     image: 818271266998.dkr.ecr.us-east-1.amazonaws.com/medguardian:medguardian_web
-    command: python3 manage.py runserver 0.0.0.0:8000
+    command: gunicorn medguardian.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - ./medguardian:/usr/src/medguardian/
       - static_volume:/home/medguardian/web/staticfiles
