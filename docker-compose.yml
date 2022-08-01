@@ -57,7 +57,7 @@ services:
     expose:
       - 8002
     environment:
-      - - DB_NAME=medguardian_db
+      - DB_NAME=medguardian_db
       - DB_USER=postgres
       - DB_PASSWORD=brongirl9
       - DB_HOST=medguardian.c7zbj5g2txwt.us-east-1.rds.amazonaws.com
