@@ -1,0 +1,55 @@
+apiVersion: medguardian/v1
+kind: Deployment
+metadata:
+  name: medguardian
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: medguardian
+  template:
+    metadata:
+      labels:
+        app: medguardian
+    spec:
+      containers:
+        - args:
+            - python
+            - manage.py
+            - runserver
+            - 0.0.0.0:8000
+          name: workshop4
+          image: medguardianregistry.azurecr.io/web
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DATABASE_HOST
+              value: "medguardian-server.postgres.database.azure.com"
+            - name: DATABASE_USER
+              value: "awedsnail6"
+            - name: DATABASE_PASSWORD
+              value: "ZfPl0x_UDrFV0SySepQS3g"
+            - name: DATABASE_NAME
+              value: "medguardian_db"
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - workshop4
+              topologyKey: "kubernetes.io/hostname"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: medguardian-service
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8000
+  selector:
+    app: medguardian

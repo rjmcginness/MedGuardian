@@ -28,8 +28,10 @@ SECRET_KEY = 'django-insecure-378!^kmuhoz6+u$4$pjuu*dp)ycr8+p^t(x2ju#@lp$-j&2&5p
 DEBUG = True
 
 ######HARDCODED FOR NOW
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
-CSRF_TRUSTED_ORIGINS = ['http://localhost:2813', 'http://127.0.0.1:2813']
+ALLOWED_HOSTS = ['ec2-50-16-207-76.compute-1.amazonaws.com', 'localhost', '127.0.0.1', '0.0.0.0', '[::1]']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:2813',
+                        'http://127.0.0.1:2813',
+                        'http://ec2-50-16-207-76.compute-1.amazonaws.com:2813']
 
 # Application definition
 

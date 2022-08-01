@@ -56,7 +56,7 @@ if __name__ == '__main__':
                                            from_=server_number,
                                            body=f'Hello! A reminder from MedGuardian.')
 
-            time.sleep(increment)
+            time.sleep(0.5)# FOR DEMO)increment)
         except KeyboardInterrupt:
             print('exited', datetime.datetime.now())
             exit()

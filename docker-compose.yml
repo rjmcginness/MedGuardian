@@ -1,6 +1,7 @@
 services:
   web:
     build: ./medguardian
+    image: 818271266998.dkr.ecr.us-east-1.amazonaws.com/medguardian:medguardian_web
     command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
       - ./medguardian:/usr/src/medguardian/
@@ -33,22 +34,23 @@ services:
     volumes:
       - ./data:/data
       - ./data/misc/medguardian_db_init.sql:/docker-entrypoint-initdb.d/1-django-init.sql
-  pgadmin:
-    container_name: pgadmin_container
-    image: dpage/pgadmin4:6.11
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: brongirl9
-      PGADMIN_LISTEN_PORT: 5433
-      PGADMIN_CONFIG_SERVER_MODE: "False"
-      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
-    ports:
-      - "5433:5433"
-    depends_on:
-      - pg
+  # pgadmin:
+  #   container_name: pgadmin_container
+  #   image: dpage/pgadmin4:6.11
+  #   restart: always
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@example.com
+  #     PGADMIN_DEFAULT_PASSWORD: brongirl9
+  #     PGADMIN_LISTEN_PORT: 5433
+  #     PGADMIN_CONFIG_SERVER_MODE: "False"
+  #     PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+  #   ports:
+  #     - "5433:5433"
+  #   depends_on:
+  #     - pg
   notification_service:
     build: ./services
+    image: 818271266998.dkr.ecr.us-east-1.amazonaws.com/medguardian:medguardian_notification_service
     command: python med_notification.py
     expose:
       - 8002
@@ -63,6 +65,7 @@ services:
       - web
   db_load:
     build: ./services
+    image: image: 818271266998.dkr.ecr.us-east-1.amazonaws.com/medguardian:medguardian_db_load
     command: python update_db.py
     expose:
       - 8003
