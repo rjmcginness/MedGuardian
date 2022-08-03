@@ -119,6 +119,10 @@ class PrescriberChosenView(MedGuardianSecureViewMixin, TemplateView):
 
         if not PatientPrescribers.objects.filter(patient_id=patient_id, prescriber_id=prescriber_id).exists():
             PatientPrescribers.objects.create(patient_id=patient_id, prescriber_id=prescriber_id)
+        
+        context = {
+            'prescriber': Prescriber.objects.get(id=prescriber_id)
+        }
 
         return render(self.request, template_name='prescriber-added.html', context=context)
 
