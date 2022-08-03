@@ -13,7 +13,7 @@ services:
     environment:
       - DB_NAME=medguardian_db
       - DB_USER=postgres
-      - DB_PASSWORD=brongirl9
+      - DB_PASSWORD=REMOVED
       - DB_HOST=medguardian.c7zbj5g2txwt.us-east-1.rds.amazonaws.com
       - DB_PORT=5432
       - DATABASE=postgres
@@ -28,7 +28,7 @@ services:
     #   restart: always
     #   environment:
     #     POSTGRES_USER: postgres
-    #     POSTGRES_PASSWORD: brongirl9
+    #     POSTGRES_PASSWORD: REMOVED
     #     POSTGRES_DB: medguardian_db
     #     POSTGRES_HOST_AUTH_METHOD: trust
     #   ports:
@@ -42,7 +42,7 @@ services:
     #   restart: always
     #   environment:
     #     PGADMIN_DEFAULT_EMAIL: admin@example.com
-    #     PGADMIN_DEFAULT_PASSWORD: brongirl9
+    #     PGADMIN_DEFAULT_PASSWORD: REMOVED
     #     PGADMIN_LISTEN_PORT: 5433
     #     PGADMIN_CONFIG_SERVER_MODE: "False"
     #     PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
@@ -59,15 +59,12 @@ services:
     environment:
       - DB_NAME=medguardian_db
       - DB_USER=postgres
-      - DB_PASSWORD=brongirl9
+      - DB_PASSWORD=REMOVED
       - DB_HOST=medguardian.c7zbj5g2txwt.us-east-1.rds.amazonaws.com
       - DB_PORT=5432
       - DATABASE=postgres
       - VIRTUAL_HOST=ec2-50-16-207-76.compute-1.amazonaws.com
       - VIRTUAL_PORT=8000
-      - TWILIO_ACCOUNT_SID=AC383c202c562569427d0a8cb5f348bef2
-      - TWILIO_AUTH_TOKEN=465a18a4a56139cba879e003dfb453f2
-      - TWILIO_NUMBER=+19897047132
     depends_on:
       - web
   db_load:
@@ -79,7 +76,7 @@ services:
     environment:
       - DB_NAME=medguardian_db
       - DB_USER=postgres
-      - DB_PASSWORD=brongirl9
+      - DB_PASSWORD=REMOVED
       - DB_HOST=medguardian.c7zbj5g2txwt.us-east-1.rds.amazonaws.com
       - DB_PORT=5432
       - DATABASE=postgres
