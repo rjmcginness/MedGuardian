@@ -1,7 +1,7 @@
 import datetime
 import time
 from typing import Optional
-from typing import Tuple
+from typing import List
 from twilio.rest import Client
 from decouple import config
 
@@ -15,11 +15,11 @@ from db_access import execute_statement
 
 
 
-def patients_to_notify(db, admin_time: datetime.datetime.time) -> Tuple[tuple]:
+def patients_to_notify(db, admin_time: datetime.datetime.time) -> List[tuple]:
     '''
                 Query database for patients to notify if they have medication
                 to be administered at admin_time
-                :return: A Tuple of tuples, containing patient name and
+                :return: A List of tuples, containing patient name and
                          mobile number
             '''
     #####################################################
